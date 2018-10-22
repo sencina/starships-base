@@ -1,4 +1,4 @@
-package edu.austral.util
+package edu.austral.starship.scala.base.collision
 
 import java.awt.Shape
 import java.awt.geom.Area
