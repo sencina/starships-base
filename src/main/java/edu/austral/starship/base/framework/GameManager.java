@@ -29,7 +29,7 @@ public class GameManager extends PApplet {
     }
 
     public void keyReleased(KeyEvent event) {
-        keySet.add(event.getKeyCode());
+        keySet.remove(event.getKeyCode());
 
         gameFramework.keyReleased(event);
     }
