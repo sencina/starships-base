@@ -1,14 +1,17 @@
-package edu.austral.starship;
+package edu.austral.dissis.starship;
 
-import edu.austral.starship.base.framework.GameFramework;
-import edu.austral.starship.base.framework.ImageLoader;
-import edu.austral.starship.base.framework.WindowSettings;
+import edu.austral.dissis.starship.base.framework.GameFramework;
+import edu.austral.dissis.starship.base.framework.ImageLoader;
+import edu.austral.dissis.starship.base.framework.WindowSettings;
+import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.event.KeyEvent;
 
 import java.util.Set;
 
 public class CustomGameFramework implements GameFramework {
+
     @Override
     public void setup(WindowSettings windowsSettings, ImageLoader imageLoader) {
         windowsSettings

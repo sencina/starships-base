@@ -1,6 +1,6 @@
-package edu.austral.starship.base.framework;
+package edu.austral.dissis.starship.base.framework;
 
-import edu.austral.starship.CustomGameFramework;
+import edu.austral.dissis.starship.CustomGameFramework;
 import processing.core.PApplet;
 import processing.event.KeyEvent;
 

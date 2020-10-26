@@ -1,4 +1,4 @@
-package edu.austral.starship.base.vector;
+package edu.austral.dissis.starship.base.vector;
 
 import static java.lang.Math.*;
 
@@ -13,7 +13,7 @@ public class Vector2 {
 
     public Vector2 add(Vector2 other) {return new Vector2(x + other.x, y + other.y);}
 
-    public Vector2 substract(Vector2 other) {return new Vector2(x - other.x, y - other.y);}
+    public Vector2 subtract(Vector2 other) {return new Vector2(x - other.x, y - other.y);}
 
     public Vector2 multiply(Float scalar) {return new Vector2(x * scalar, y * scalar);}
 

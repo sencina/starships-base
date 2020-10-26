@@ -1,4 +1,4 @@
-package edu.austral.starship.base.framework;
+package edu.austral.dissis.starship.base.framework;
 
 import processing.core.PGraphics;
 import processing.event.KeyEvent;
