@@ -4,7 +4,6 @@ plugins {
     id("org.openjfx.javafxplugin").version("0.0.13")
 }
 
-
 group = "edu.austral.ingsis.starships-ui"
 version = "1.0.0"
 
