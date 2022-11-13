@@ -11,7 +11,7 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
     maven {
-        url = uri("https://maven.pkg.github.com/austral-ingsis/chess-ui")
+        url = uri("https://maven.pkg.github.com/austral-ingsis/starships-ui")
         credentials {
             username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER")
             password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
