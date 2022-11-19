@@ -13,8 +13,8 @@ repositories {
     maven {
         url = uri("https://maven.pkg.github.com/austral-ingsis/starships-ui")
         credentials {
-            username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_USER")
-            password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            username = project.findProperty("github_username") as String? ?: System.getenv("GITHUB_USER")
+            password = project.findProperty("github_token") as String? ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
@@ -23,6 +23,8 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("edu.austral.ingsis.starships:starships-ui:1.0.0")
+    implementation("junit:junit:4.13.1")
+    testImplementation("org.testng:testng:7.1.0")
 }
 
 javafx {
