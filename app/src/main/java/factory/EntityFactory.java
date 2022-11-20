@@ -10,7 +10,7 @@ import movement.util.Vector;
 
 public class EntityFactory {
 
-    public static ShipController createShip(String id, int health) {
-        return new ShipController(new Mover<>(new Ship(id, health), new Coordinate(400,400), new Vector(0,1), 10), new Weapon(10, BulletType.BULLET));
-    }
+        public static ShipController createShip(String id, int lives) {
+            return new ShipController(new Ship(id, lives), new Weapon(10, BulletType.BULLET));
+        }
 }

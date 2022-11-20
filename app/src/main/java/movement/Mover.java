@@ -1,11 +1,12 @@
 package movement;
 
+import model.Collideable;
 import model.Entity;
 import model.Movable;
 import movement.util.Coordinate;
 import movement.util.Vector;
 
-public class Mover<T extends Entity> implements Movable<Mover<T>> {
+public class Mover<T extends Collideable<T>> implements Movable {
 
     private final T entity;
     private final Coordinate position;
@@ -22,20 +23,19 @@ public class Mover<T extends Entity> implements Movable<Mover<T>> {
     public T getEntity(){
         return entity;
     }
-
-    @Override
-    public Mover move(double time) {
-        return new Mover<>(entity,position.move(direction, time, speed), direction, speed);
-    }
-
-    @Override
-    public Mover rotate(double degrees){
-        return new Mover<>(entity, position, direction.rotate(degrees), speed);
-    }
-
     @Override
     public String getId() {
         return entity.getId();
+    }
+
+    @Override
+    public Mover<T> move(double time) {
+        return new Mover<>(entity, position.move(direction, time,speed), direction, speed);
+    }
+
+    @Override
+    public Mover<T> rotate(double degrees) {
+        return new Mover<>(entity, position, direction.rotate(degrees), speed);
     }
 
     @Override
@@ -58,7 +58,9 @@ public class Mover<T extends Entity> implements Movable<Mover<T>> {
         return speed;
     }
 
+    @Override
     public Mover<T> stop() {
         return new Mover<>(entity, position, direction, 0);
     }
+
 }

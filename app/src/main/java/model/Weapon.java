@@ -1,13 +1,10 @@
 package model;
 
 import enums.BulletType;
-import manager.IdGenerator;
+import generator.IdGenerator;
 import movement.Mover;
 import movement.util.Coordinate;
 import movement.util.Vector;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Weapon {
 
@@ -23,8 +20,8 @@ public class Weapon {
         return bulletType;
     }
 
-    public Mover<Bullet> shoot(Coordinate position, Vector vector) {
-        return new Mover<Bullet>(new Bullet(IdGenerator.generateId(), damage), position, vector, 20);
+    public Mover<Bullet> shoot(Coordinate position, Vector vector, String ownerId) {
+       return new Mover<>(new Bullet(IdGenerator.generateId(), ownerId, damage), position, vector, 20);
     }
 
     public int getDamage() {

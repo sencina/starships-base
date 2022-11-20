@@ -1,16 +1,19 @@
 package model;
 
+import movement.Mover;
 import movement.util.Coordinate;
 import movement.util.Vector;
 
-public interface Movable<T> extends Entity {
+public interface Movable extends Entity {
 
-    T move(double time);
+    Movable move(double time);
 
-    T rotate(double degrees);
+    Movable rotate(double degrees);
     Coordinate getPosition();
     Vector getVector();
     double getRotationInDegrees();
 
     double getSpeed();
+
+    Movable stop();
 }
