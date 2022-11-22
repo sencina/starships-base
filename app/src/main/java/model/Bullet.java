@@ -1,7 +1,6 @@
 package model;
 
-import movement.util.Coordinate;
-import movement.util.Vector;
+import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
@@ -12,7 +11,7 @@ public class Bullet implements Collideable<Bullet>{
     private final String ownerId;
 
     public Bullet(String id, String ownerId, int damage) {
-        this.id = id;
+        this.id = "bullet-"+id;
         this.damage = damage;
         this.ownerId = ownerId;
     }
@@ -39,5 +38,14 @@ public class Bullet implements Collideable<Bullet>{
 
     public String getOwnerId(){
         return ownerId;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("damage", damage);
+        jsonObject.put("ownerId", ownerId);
+        return jsonObject;
     }
 }

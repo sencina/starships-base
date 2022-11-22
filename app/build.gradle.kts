@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("edu.austral.ingsis.starships:starships-ui:1.0.0")
     implementation("junit:junit:4.13.1")
+    implementation ("com.googlecode.json-simple:json-simple:1.1.1")
     testImplementation("org.testng:testng:7.1.0")
 }
 

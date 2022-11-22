@@ -1,7 +1,6 @@
 package model;
 
-import movement.util.Coordinate;
-import movement.util.Vector;
+import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
@@ -11,17 +10,21 @@ public class Asteroid implements Collideable<Asteroid>{
     private final int size;
 
     public Asteroid(String id, int size) {
-        this.id = id;
+        this.id = "asteroid-"+id;
         this.size = size;
     }
 
     @Override
     public Optional<Asteroid> collide(Collideable other) {
 
+        if (other.getIdType().equals("asteroid")) {
+            return Optional.of(this);
+        }
+
         if (size - other.getDamage() <= 0) {
             return Optional.empty();
         }
-        return Optional.of(new Asteroid(id, size - other.getDamage()));
+        return Optional.of(new Asteroid(getIdNumber(), size - other.getDamage()));
     }
 
     @Override
@@ -37,5 +40,13 @@ public class Asteroid implements Collideable<Asteroid>{
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("size", size);
+        return jsonObject;
     }
 }

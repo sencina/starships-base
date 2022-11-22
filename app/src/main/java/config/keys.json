@@ -1,0 +1,1 @@
+{"starship-0":[{"action":"TURN_LEFT","key":"A"},{"action":"TURN_RIGHT","key":"D"},{"action":"ACCELERATE","key":"W"},{"action":"STOP","key":"S"},{"action":"SHOOT","key":"SPACE"}]}

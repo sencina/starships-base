@@ -1,11 +1,11 @@
 package movement.util;
 
-public class Coordinate {
+public class Position {
 
     private final double x;
     private final double y;
     //TODO implement time
-    public Coordinate(double x, double y) {
+    public Position(double x, double y) {
         this.x = x;
         this.y = y;
     }
@@ -18,7 +18,7 @@ public class Coordinate {
         return y;
     }
 
-    public Coordinate move(Vector vector, double time, double speed) {
-        return new Coordinate(x + (int) vector.getX() * speed, y + (int) vector.getY() * speed);
+    public Position move(Vector vector, double time, double speed) {
+        return new Position(x + (int) vector.getX() * speed, y + (int) vector.getY() * speed);
     }
 }

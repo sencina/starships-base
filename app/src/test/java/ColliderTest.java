@@ -11,8 +11,8 @@ public class ColliderTest {
     @Test
     public void testCollide() {
 
-        ShipController controller1 = EntityFactory.createShip("1", 3);
-        ShipController controller2 = EntityFactory.createShip("2", 3);
+        ShipController controller1 = EntityFactory.createDefaultShipControllerForTesting();
+        ShipController controller2 = EntityFactory.createDefaultShipControllerForTesting();
 
         ShipController controller3 = controller1.collide(controller2).get();
 
@@ -22,7 +22,7 @@ public class ColliderTest {
     @Test
     public void testCollide2() {
 
-        ShipController controller1 = EntityFactory.createShip("1", 3);
+        ShipController controller1 = EntityFactory.createDefaultShipControllerForTesting();
         Asteroid asteroid = new Asteroid("2", 100);
 
         Optional<ShipController> controller2 = controller1.collide(asteroid);
@@ -36,7 +36,7 @@ public class ColliderTest {
     @Test
     public void deathTest() {
 
-        ShipController controller1 = EntityFactory.createShip("1", 3);
+        ShipController controller1 = EntityFactory.createDefaultShipControllerForTesting();
         Asteroid asteroid = new Asteroid("2", 100);
 
         Optional<ShipController> controller2 = controller1.collide(asteroid);
@@ -45,5 +45,16 @@ public class ColliderTest {
 
         Assert.assertEquals(100, asteroid.getLives());
         Assert.assertTrue( controller4.isEmpty());
+    }
+
+    @Test
+    public void asteroidCollisionTest(){
+
+        Asteroid asteroid1 = new Asteroid("1", 100);
+        Asteroid asteroid2 = new Asteroid("2", 100);
+
+        Optional<Asteroid> asteroid3 = asteroid1.collide(asteroid2);
+
+        Assert.assertEquals(100, asteroid3.get().getLives());
     }
 }

@@ -1,18 +1,22 @@
 package model;
 
 import enums.BulletType;
-import generator.IdGenerator;
+import factory.EntityFactory;
 import movement.Mover;
-import movement.util.Coordinate;
+import movement.util.Position;
 import movement.util.Vector;
+import org.json.simple.JSONObject;
 
-public class Weapon {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Weapon implements Serializable{
 
     private final BulletType bulletType;
-    private final int damage;
+    private final int bulletsPerShot;
 
-    public Weapon(int damage, BulletType bulletType) {
-        this.damage = damage;
+    public Weapon(int bulletsPerShot, BulletType bulletType) {
+        this.bulletsPerShot = bulletsPerShot;
         this.bulletType = bulletType;
     }
 
@@ -20,11 +24,19 @@ public class Weapon {
         return bulletType;
     }
 
-    public Mover<Bullet> shoot(Coordinate position, Vector vector, String ownerId) {
-       return new Mover<>(new Bullet(IdGenerator.generateId(), ownerId, damage), position, vector, 20);
+    public List<Mover<Bullet>> shoot(Position position, Vector vector, String ownerId) {
+       List<Mover<Bullet>> bullets = new ArrayList<>();
+         for (int i = 0; i < bulletsPerShot; i++) {
+              bullets.add(EntityFactory.createBulletMover(bulletType, new Position(position.getX() + i*10, position.getY() + i*10), vector, ownerId));
+         }
+         return bullets;
     }
 
-    public int getDamage() {
-        return damage;
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("bulletsPerShot", bulletsPerShot);
+        jsonObject.put("bulletType", bulletType.toString());
+        return jsonObject;
     }
 }

@@ -1,5 +1,7 @@
 package model;
 
+import org.json.simple.JSONObject;
+
 import java.util.Optional;
 
 public class Ship implements Collideable<Ship>, Entity {
@@ -8,7 +10,7 @@ public class Ship implements Collideable<Ship>, Entity {
     private final int lives;
 
     public Ship(String id, int lives) {
-        this.id = id;
+        this.id = "starship-"+id;
         this.lives = lives;
     }
 
@@ -19,7 +21,7 @@ public class Ship implements Collideable<Ship>, Entity {
         if (lives - life <= 0) {
             return Optional.empty();
         }
-        return Optional.of(new Ship(id, lives - life));//0 si choca con una nave, 1 si choca con algo que no sea una nave
+        return Optional.of(new Ship(getIdNumber(), lives - life));//0 si choca con una nave, 1 si choca con algo que no sea una nave
     }
 
     @Override
@@ -35,5 +37,13 @@ public class Ship implements Collideable<Ship>, Entity {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", id);
+        jsonObject.put("lives", lives);
+        return jsonObject;
     }
 }

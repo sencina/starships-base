@@ -1,12 +1,15 @@
 package edu.austral.ingsis.starships
 
 import edu.austral.ingsis.starships.ui.*
-import edu.austral.ingsis.starships.ui.ElementColliderType.*
+import factory.EntityFactory
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
+import movement.util.Position
+import movement.util.Vector
+import parser.ModelToElementModelParser
 
 fun main() {
     launch(Starships::class.java)
@@ -22,19 +25,17 @@ class MyStarships() : Application() {
     }
 
     override fun start(primaryStage: Stage) {
-        facade.elements["asteroid-1"] =
-            ElementModel("asteroid-1", 0.0, 0.0, 30.0, 40.0, 0.0, Elliptical, null)
-        facade.elements["asteroid-2"] =
-            ElementModel("asteroid-2", 100.0, 100.0, 30.0, 20.0, 90.0, Rectangular, null)
-        facade.elements["asteroid-3"] =
-            ElementModel("asteroid-3", 200.0, 200.0, 20.0, 30.0, 180.0, Elliptical, null)
 
-        val starship = ElementModel("starship", 300.0, 300.0, 40.0, 40.0, 270.0, Triangular, STARSHIP_IMAGE_REF)
-        facade.elements["starship"] = starship
+//        val starship = ModelToElementModelParser.parse(EntityFactory.createDefaultShipMover(
+//            Position(
+//                400.0,
+//                400.0
+//            ), Vector(90.0)))
+//        facade.elements[starship.id] = starship
 
         facade.timeListenable.addEventListener(TimeListener(facade.elements))
         facade.collisionsListenable.addEventListener(CollisionListener())
-        keyTracker.keyPressedListenable.addEventListener(KeyPressedListener(starship))
+        //keyTracker.keyPressedListenable.addEventListener(KeyPressedListener(starship))
 
         val scene = Scene(facade.view)
         keyTracker.scene = scene
@@ -56,22 +57,7 @@ class MyStarships() : Application() {
 
 class MyTimeListener(private val elements: Map<String, ElementModel>) : EventListener<TimePassed> {
     override fun handle(event: TimePassed) {
-        elements.forEach {
-            val (key, element) = it
-            when(key) {
-                "starship" -> {}
-                "asteroid-1" -> {
-                    element.x.set(element.x.value + 0.25)
-                    element.y.set(element.y.value + 0.25)
-                }
-                else -> {
-                    element.x.set(element.x.value - 0.25)
-                    element.y.set(element.y.value - 0.25)
-                }
-            }
-
-            element.rotationInDegrees.set(element.rotationInDegrees.value + 1)
-        }
+        //
     }
 }
 
