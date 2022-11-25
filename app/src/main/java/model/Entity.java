@@ -1,6 +1,6 @@
 package model;
 
-public interface Entity extends Serializable {
+public interface Entity extends Serializable{
 
     String getId();
 

@@ -1,18 +1,23 @@
 package edu.austral.ingsis.starships
 
+import config.reader.ConfigManager
+import controller.ShipController
 import edu.austral.ingsis.starships.ui.*
-import factory.EntityFactory
+import factory.StateFactory
 import javafx.application.Application
 import javafx.application.Application.launch
+import javafx.beans.Observable
+import javafx.collections.ObservableMap
 import javafx.scene.Scene
 import javafx.scene.input.KeyCode
 import javafx.stage.Stage
-import movement.util.Position
-import movement.util.Vector
-import parser.ModelToElementModelParser
+import movement.KeyMovement
+import movement.Mover
+import state.GameState
 
+private var gameState = ConfigManager.readState()//StateFactory.createTestGameState()
 fun main() {
-    launch(Starships::class.java)
+    launch(MyStarships::class.java)
 }
 
 class MyStarships() : Application() {
@@ -26,27 +31,49 @@ class MyStarships() : Application() {
 
     override fun start(primaryStage: Stage) {
 
-//        val starship = ModelToElementModelParser.parse(EntityFactory.createDefaultShipMover(
-//            Position(
-//                400.0,
-//                400.0
-//            ), Vector(90.0)))
-//        facade.elements[starship.id] = starship
+        addElementModels()
+        addListeners()
+        setScenes(primaryStage)
+        startGame(primaryStage)
 
-        facade.timeListenable.addEventListener(TimeListener(facade.elements))
-        facade.collisionsListenable.addEventListener(CollisionListener())
-        //keyTracker.keyPressedListenable.addEventListener(KeyPressedListener(starship))
+    }
 
+    private fun startGame(primaryStage: Stage) {
+        facade.start()
+        keyTracker.start()
+        primaryStage.show()
+    }
+
+    private fun setScenes(primaryStage: Stage) {
         val scene = Scene(facade.view)
         keyTracker.scene = scene
 
         primaryStage.scene = scene
-        primaryStage.height = 800.0
-        primaryStage.width = 800.0
+        primaryStage.height = gameState.height
+        primaryStage.width = gameState.width
 
-        facade.start()
-        keyTracker.start()
-        primaryStage.show()
+    }
+
+    private fun addListeners() {
+        facade.timeListenable.addEventListener(MyTimeListener(facade.elements))
+        facade.collisionsListenable.addEventListener(MyCollisionListener())
+        keyTracker.keyPressedListenable.addEventListener(MyKeyPressedListener(gameState.shipControllers,facade))
+    }
+
+    private fun addElementModels() {
+
+        gameState.ships.forEach { ship ->
+            facade.elements[ship.id] = ship.toElementModel()
+        }
+
+        gameState.entities.forEach { entity ->
+            facade.elements[entity.id] = entity.toElementModel()
+        }
+
+    }
+
+    fun pause(){
+        facade.stop()
     }
 
     override fun stop() {
@@ -55,9 +82,51 @@ class MyStarships() : Application() {
     }
 }
 
-class MyTimeListener(private val elements: Map<String, ElementModel>) : EventListener<TimePassed> {
+class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) : EventListener<TimePassed> {
     override fun handle(event: TimePassed) {
-        //
+
+        val newShips = ArrayList<ShipController>(gameState.shipControllers)
+        val newEntities= ArrayList<Mover<*>>()
+
+        newShips.map { it.move() }
+
+        updateFacadeShips()
+
+        gameState.entities.forEach {
+
+            val newMover = it.move()
+            val facadeMover = newMover.toElementModel()
+
+            if (elements.containsKey(it.id)) {
+                elements[it.id]?.x?.set(newMover.position.x)
+                elements[it.id]?.y?.set(newMover.position.y)
+                elements[it.id]?.rotationInDegrees?.set(newMover.getRotationInDegrees() + 270)
+            } else {
+                elements[it.id] = facadeMover
+            }
+
+            newEntities.add(newMover)
+        }
+
+        removeOutOfBoundsEntities()
+
+        gameState = GameState(gameState.width, gameState.height, newEntities, newShips,ArrayList())
+    }
+
+    private fun removeOutOfBoundsEntities() {
+        gameState.idsToRemove.forEach {
+            elements.remove(it)
+        }
+    }
+
+    private fun updateFacadeShips() {
+        gameState.ships.forEach() {
+            if (elements.containsKey(it.id)) {
+                elements[it.id]?.x?.set(it.position.x)
+                elements[it.id]?.y?.set(it.position.y)
+                elements[it.id]?.rotationInDegrees?.set(it.getRotationInDegrees() + 270)
+            }
+        }
     }
 }
 
@@ -68,13 +137,30 @@ class MyCollisionListener() : EventListener<Collision> {
 
 }
 
-class MyKeyPressedListener(private val starship: ElementModel): EventListener<KeyPressed> {
+class MyKeyPressedListener(private val controllers: List<ShipController>, private var facade: ElementsViewFacade): EventListener<KeyPressed> {
+
+    private var keyBindMap: Map<String,Map<KeyMovement,KeyCode>> = ConfigManager.readBindings()
     override fun handle(event: KeyPressed) {
-        when(event.key) {
-            KeyCode.UP -> starship.y.set(starship.y.value - 5 )
-            KeyCode.DOWN -> starship.y.set(starship.y.value + 5 )
-            KeyCode.LEFT -> starship.x.set(starship.x.value - 5 )
-            KeyCode.RIGHT -> starship.x.set(starship.x.value + 5 )
+        val key = event.key
+
+        handlePauseResume(key)
+
+        controllers.forEach { controller ->
+            keyBindMap[controller.id]?.forEach { (movement, keyCode) ->
+                if(key == keyCode){
+                   gameState = gameState.handleShipAction(controller.id, movement)
+                }
+            }
+        }
+
+
+    }
+
+    private fun handlePauseResume(key: KeyCode) {
+        when(key){
+            KeyCode.P -> facade.stop()
+            KeyCode.R -> facade.start()
+            KeyCode.G -> ConfigManager.saveState(gameState)
             else -> {}
         }
     }

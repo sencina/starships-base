@@ -5,7 +5,7 @@ import movement.util.Vector;
 
 public interface Movable extends Entity {
 
-    Movable move(double time);
+    Movable move();
 
     Movable rotate(double degrees);
     Position getPosition();

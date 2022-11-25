@@ -1,5 +1,6 @@
 package controller;
 
+import edu.austral.ingsis.starships.ui.ElementModel;
 import model.*;
 import movement.Mover;
 import movement.util.Position;
@@ -9,7 +10,7 @@ import org.json.simple.JSONObject;
 import java.util.List;
 import java.util.Optional;
 
-public class ShipController implements Collideable<ShipController> {
+public class ShipController implements Collideable<ShipController>, Showable {
 
     private final Mover<Ship> shipMover;
     private final Weapon weapon;
@@ -30,7 +31,7 @@ public class ShipController implements Collideable<ShipController> {
         if (shipOptional.isEmpty()){
             return Optional.empty();
         }
-        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getVector(), shipMover.getSpeed()), weapon));
+        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getVector(), shipMover.getSpeed(), shipMover.getParser()), weapon));
     }
 
     @Override
@@ -56,8 +57,8 @@ public class ShipController implements Collideable<ShipController> {
         return jsonObject;
     }
 
-    public ShipController move(double time) {
-        return new ShipController(shipMover.move(time), weapon);
+    public ShipController move() {
+        return new ShipController(shipMover.move(), weapon);
     }
 
     public ShipController rotate(double degrees) {
@@ -86,5 +87,14 @@ public class ShipController implements Collideable<ShipController> {
 
     public Mover<Ship> getShipMover() {
         return shipMover;
+    }
+
+    @Override
+    public ElementModel toElementModel() {
+        return shipMover.toElementModel();
+    }
+
+    public ShipController updatePosition(Position position) {
+        return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getVector(), shipMover.getSpeed(), shipMover.getParser()), weapon);
     }
 }

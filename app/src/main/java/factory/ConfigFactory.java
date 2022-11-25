@@ -1,7 +1,6 @@
 package factory;
 
 import javafx.scene.input.KeyCode;
-import model.KeyAction;
 import movement.KeyMovement;
 
 import java.util.List;
@@ -9,14 +8,21 @@ import java.util.Map;
 
 public class ConfigFactory {
 
-    public static Map<String, List<KeyAction>> createShipDefaultConfig(){
+    public static Map<String, Map<KeyMovement,KeyCode>> createShipDefaultConfig(){
         return Map.of(
-                "starship-0", List.of(
-                        new KeyAction(KeyCode.A, KeyMovement.TURN_LEFT),
-                        new KeyAction(KeyCode.D, KeyMovement.TURN_RIGHT),
-                        new KeyAction(KeyCode.W, KeyMovement.ACCELERATE),
-                        new KeyAction(KeyCode.S, KeyMovement.STOP),
-                        new KeyAction(KeyCode.SPACE, KeyMovement.SHOOT)
+                "starship-0", Map.of(
+                        KeyMovement.ACCELERATE, KeyCode.W,
+                        KeyMovement.TURN_LEFT, KeyCode.A,
+                        KeyMovement.TURN_RIGHT, KeyCode.D,
+                        KeyMovement.STOP, KeyCode.S,
+                        KeyMovement.SHOOT, KeyCode.SPACE
+                ),
+                "starship-1", Map.of(
+                        KeyMovement.ACCELERATE, KeyCode.UP,
+                        KeyMovement.TURN_LEFT, KeyCode.LEFT,
+                        KeyMovement.TURN_RIGHT, KeyCode.RIGHT,
+                        KeyMovement.STOP, KeyCode.DOWN,
+                        KeyMovement.SHOOT, KeyCode.L
                 )
         );
     }

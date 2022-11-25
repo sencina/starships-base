@@ -32,6 +32,7 @@ public class Weapon implements Serializable{
          return bullets;
     }
 
+
     @Override
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();

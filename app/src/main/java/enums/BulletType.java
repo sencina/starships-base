@@ -3,5 +3,7 @@ package enums;
 public enum BulletType {
     BULLET,
     LASER,
-    ROCKET
+    ROCKET,
+    PRISON_MIKE,
+    CUSTOM
 }

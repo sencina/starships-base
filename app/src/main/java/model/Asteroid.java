@@ -20,7 +20,6 @@ public class Asteroid implements Collideable<Asteroid>{
         if (other.getIdType().equals("asteroid")) {
             return Optional.of(this);
         }
-
         if (size - other.getDamage() <= 0) {
             return Optional.empty();
         }

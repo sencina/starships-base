@@ -1,6 +1,7 @@
 import controller.ShipController;
 import factory.EntityFactory;
 import model.Asteroid;
+import model.Bullet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,5 +57,16 @@ public class ColliderTest {
         Optional<Asteroid> asteroid3 = asteroid1.collide(asteroid2);
 
         Assert.assertEquals(100, asteroid3.get().getLives());
+    }
+
+    @Test
+    public void bulletCollisionTest(){
+
+        Bullet bullet1 = new Bullet("1", "starship-0", 100);
+        Bullet bullet2 = new Bullet("2", "starship-1", 100);
+
+        Optional<Bullet> bullet3 = bullet1.collide(bullet2);
+
+        Assert.assertFalse(bullet3.isEmpty());
     }
 }

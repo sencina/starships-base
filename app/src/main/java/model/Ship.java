@@ -1,5 +1,6 @@
 package model;
 
+import edu.austral.ingsis.starships.ui.ElementModel;
 import org.json.simple.JSONObject;
 
 import java.util.Optional;

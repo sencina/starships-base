@@ -3,9 +3,9 @@ package config.reader;
 import controller.ShipController;
 import factory.EntityFactory;
 import javafx.scene.input.KeyCode;
-import model.KeyAction;
 import movement.KeyMovement;
 import movement.Mover;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,56 +14,40 @@ import state.GameState;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ConfigManager {
 
-    private final String path;
+    private final static String STATE_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/state.json";
+    private final static String KEYS_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/keys.json";
 
-    public ConfigManager(String path) {
-        this.path = path;
-    }
+    public static void saveKeys(Map<String, Map<KeyMovement, KeyCode>> map) throws IOException {
 
-    public Map<String, List<KeyAction>> loadKeys() throws IOException, ParseException {
-        Object obj = new JSONParser().parse(new FileReader(path));
-        JSONObject jo = (JSONObject) obj;
-        JSONArray ja = (JSONArray) jo.get("starship-0");
-        return Map.of("starship-0", fillKeyActionListForId("starship-0", ja));
-    }
-
-    private List<KeyAction> fillKeyActionListForId(String id, JSONArray ja){
-
-        List<KeyAction> list = new ArrayList<>();
-        for (Object o : ja) {
-            JSONObject keyAction = (JSONObject) o;
-            list.add(new KeyAction(KeyCode.getKeyCode((String) keyAction.get("key")), KeyMovement.valueOf((String) keyAction.get("action"))));
-        }
-
-        return list;
-    }
-
-    public void saveKeys(Map<String, List<KeyAction>> map) throws IOException {
-
-        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
         for (String key : map.keySet()) {
-            JSONArray ja = new JSONArray();
-            for (KeyAction action : map.get(key)) {
-                JSONObject actionJo = new JSONObject();
-                actionJo.put("key", action.key().toString());
-                actionJo.put("action", action.action().toString());
-                ja.add(actionJo);
-            }
-            jo.put(key, ja);
+            JSONObject jo = new JSONObject();
+            jo.put("id", key);
+            jo.put("map", parseMapToString(map.get(key)));
+            ja.add(jo);
         }
-        writeFile(jo.toJSONString());
+        writeFile(ja.toJSONString(), KEYS_PATH);
     }
 
-    public void saveState(GameState state) throws IOException {
-        writeFile(state.toJson().toJSONString());
+    private static Map<KeyMovement,String> parseMapToString(Map<KeyMovement, KeyCode> keyMovementKeyCodeMap) {
+        Map<KeyMovement,String> toReturn = new HashMap<>();
+        for (KeyMovement keyMovement : keyMovementKeyCodeMap.keySet()) {
+            toReturn.put(keyMovement, keyMovementKeyCodeMap.get(keyMovement).getName());
+        }
+        return toReturn;
     }
 
-    private JSONArray createEntityArray(List<Mover> entities) {
+    public static void saveState(GameState state) throws IOException {
+        writeFile(state.toJson().toJSONString(),STATE_PATH);
+    }
+
+    private static JSONArray createEntityArray(List<Mover> entities) {
         JSONArray ja = new JSONArray();
         for (Mover mover : entities) {
             JSONObject jo = new JSONObject();
@@ -73,24 +57,24 @@ public class ConfigManager {
         return ja;
     }
 
-    private void writeFile(String string) throws IOException {
+    private static void writeFile(String string, String path) throws IOException {
         FileWriter writer = new FileWriter(path);
         writer.write(string);
         writer.close();
     }
 
-    public GameState readState() throws IOException, ParseException {
+    public static GameState readState() throws IOException, ParseException {
 
-        Object obj = new JSONParser().parse(new FileReader(path));
+        Object obj = new JSONParser().parse(new FileReader(STATE_PATH));
         JSONObject jo = (JSONObject) obj;
         JSONArray ja = (JSONArray) jo.get("entities");
         JSONArray jas = (JSONArray) jo.get("ships");
 
-        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas));
+        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas), new ArrayList<>());
 
     }
 
-    private List<ShipController> fillShipList(JSONArray jas) {
+    private static List<ShipController> fillShipList(JSONArray jas) {
         List<ShipController> list = new ArrayList<>();
         for (Object o : jas) {
             JSONObject jo = (JSONObject) o;
@@ -99,7 +83,7 @@ public class ConfigManager {
         return list;
     }
 
-    private List<Mover> fillEntityList(JSONArray ja) {
+    private static List<Mover> fillEntityList(JSONArray ja) {
 
         List<Mover> list = new ArrayList<>();
         for (Object o : ja) {
@@ -108,5 +92,27 @@ public class ConfigManager {
         }
 
         return list;
+    }
+
+    @NotNull
+    public static Map<String,Map<KeyMovement,KeyCode>> readBindings() throws IOException, ParseException {
+
+        JSONArray ja = (JSONArray) (new JSONParser().parse( new FileReader(KEYS_PATH)));
+        Map<String,Map<KeyMovement,KeyCode>> map = new HashMap<>();
+        for (Object o : ja) {
+            JSONObject jo = (JSONObject) o;
+            map.put((String) jo.get("id"), parseStringToMap((JSONObject) jo.get("map")));
+        }
+        return map;
+    }
+
+    private static Map<KeyMovement, KeyCode> parseStringToMap(JSONObject map) {
+        Map<KeyMovement,KeyCode> toReturn = new HashMap<>();
+        toReturn.put(KeyMovement.ACCELERATE, KeyCode.getKeyCode((String) map.get("ACCELERATE")));
+        toReturn.put(KeyMovement.TURN_LEFT, KeyCode.getKeyCode((String) map.get("TURN_LEFT")));
+        toReturn.put(KeyMovement.TURN_RIGHT, KeyCode.getKeyCode((String) map.get("TURN_RIGHT")));
+        toReturn.put(KeyMovement.SHOOT, KeyCode.getKeyCode((String) map.get("SHOOT")));
+        toReturn.put(KeyMovement.STOP, KeyCode.getKeyCode((String) map.get("STOP")));
+        return toReturn;
     }
 }

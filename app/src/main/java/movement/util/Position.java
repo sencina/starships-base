@@ -18,7 +18,7 @@ public class Position {
         return y;
     }
 
-    public Position move(Vector vector, double time, double speed) {
+    public Position move(Vector vector, double speed) {
         return new Position(x + (int) vector.getX() * speed, y + (int) vector.getY() * speed);
     }
 }
