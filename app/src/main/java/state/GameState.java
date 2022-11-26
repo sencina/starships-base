@@ -4,19 +4,22 @@ import controller.ShipController;
 import generator.IdGenerator;
 import generator.PositionGenerator;
 import generator.SizeGenerator;
-import generator.VectorGenerator;
 import model.Asteroid;
+import model.Collideable;
 import model.Serializable;
+import model.Ship;
 import movement.KeyMovement;
 import movement.Mover;
-import movement.util.Position;
+import movement.Position;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import parser.AsteroidParser;
-import parser.ShipControllerParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static config.Constants.ROTATION_DEGREES;
 
 public class GameState implements Serializable {
 
@@ -24,20 +27,29 @@ public class GameState implements Serializable {
     private final double height;
     private final List<Mover> entities;
     private final List<ShipController> ships;
-
     private final List<String> idsToRemove;
+
+    private final boolean paused;
 
     //TODO add scores map shipId integer
 
-    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove) {
+    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove, boolean paused) {
         this.width = width;
         this.height = height;
         this.entities = entities;
         this.ships = ships;
         this.idsToRemove = idsToRemove;
+        this.paused = paused;
     }
 
+    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove) {
+        this(width, height, entities, ships, idsToRemove, false);
+    }
+
+
     public GameState handleShipAction(String id, KeyMovement movement) {
+
+        if (paused) return this;
 
         ShipController controller = findShipById(id);
 
@@ -46,14 +58,14 @@ public class GameState implements Serializable {
         List<Mover> newEntities = new ArrayList<>(entities);
         ShipController newController = controller;
         switch (movement){
-            case ACCELERATE -> newController = validatePosition(controller.move());
-            case TURN_LEFT -> newController = controller.rotate(-15);
-            case TURN_RIGHT -> newController = controller.rotate(15);
+            case ACCELERATE -> newController = validatePosition(controller.accelerate());
+            case TURN_LEFT -> newController = controller.rotate(-ROTATION_DEGREES);
+            case TURN_RIGHT -> newController = controller.rotate(ROTATION_DEGREES);
             case SHOOT -> newEntities.addAll(controller.shoot());
             case STOP -> newController = controller.stop();
         }
         newControllers.add(newController);
-        return new GameState(width, height, newEntities, newControllers, idsToRemove);
+        return new GameState(width, height, newEntities, newControllers, idsToRemove, paused);
     }
 
     private ShipController validatePosition(ShipController move) {
@@ -81,20 +93,20 @@ public class GameState implements Serializable {
     }
 
     public GameState moveEntities() {
-
+        if (paused) return this;
         List<Mover> newEntities = new ArrayList<>();
 
         if (Math.random() < 0.05) {
-            newEntities.add(new Mover<>(new Asteroid(IdGenerator.generateId(), SizeGenerator.generateSize()), PositionGenerator.generatePosition(width, height), VectorGenerator.generateVector(), 10, new AsteroidParser()));
+            newEntities.add(new Mover<>(new Asteroid(IdGenerator.generateId(), SizeGenerator.generateSize()), PositionGenerator.generatePosition(width, height), Math.random()*360, 10, new AsteroidParser()));
         }
 
         List<String> newIdsToRemove = new ArrayList<>();
-        moveAndFilterEntities(newEntities, newIdsToRemove);
-        return new GameState(width, height, newEntities, ships, newIdsToRemove);
+        moveAndFilterInBoundsEntities(newEntities, newIdsToRemove);
+        return new GameState(width, height, newEntities, ships, newIdsToRemove, paused);
 
     }
 
-    private void moveAndFilterEntities(List<Mover> newEntities, List<String> newIdsToRemove) {
+    private void moveAndFilterInBoundsEntities(List<Mover> newEntities, List<String> newIdsToRemove) {
         for (Mover entity : entities) {
             Mover newEntity = entity.move();
             if (newEntity.getPosition().getX() < width && newEntity.getPosition().getY() < height && newEntity.getPosition().getX() >= 0 && newEntity.getPosition().getY() >= 0) {
@@ -105,6 +117,52 @@ public class GameState implements Serializable {
             }
         }
 
+    }
+
+    public GameState collideEntities(String id1, String id2){
+        List<Mover> newEntities = toMutable(new ArrayList<>(entities).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
+        List<ShipController> newControllers = toMutable(new ArrayList<>(ships).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
+        List<String> newIdsToRemove = new ArrayList<>(idsToRemove);
+
+        Mover entity1 = findEntityById(id1);
+        Mover entity2 = findEntityById(id2);
+
+        Optional<Collideable> newEntity1 = entity1.getEntity().collide(entity2.getEntity());
+        Optional<Collideable> newEntity2 = entity2.getEntity().collide(entity1.getEntity());
+
+        addNewEntity(newEntities, newControllers, newIdsToRemove, entity1, newEntity1);
+        addNewEntity(newEntities, newControllers, newIdsToRemove, entity2, newEntity2);
+
+        return new GameState(width, height, newEntities, newControllers, newIdsToRemove, paused);
+    }
+
+    private <T> List<T> toMutable(List<T> toList) {
+        return new ArrayList<>(toList);
+    }
+
+    private void addNewEntity(List<Mover> newEntities, List<ShipController> newControllers, List<String> newIdsToRemove, Mover entity1, Optional<Collideable> newEntity1) {
+        if (newEntity1.isPresent()) {
+            if (entity1.getIdType().equals("starship")) {
+                ShipController controller = findShipById(entity1.getId());
+                newControllers.add(controller.updateMover(newEntity1.get()));
+            }
+            else {
+                newEntities.add(new Mover(newEntity1.get(), entity1.getPosition(), entity1.getRotationInDegrees(), entity1.getSpeed(), entity1.getParser()));
+            }
+        }
+        else {
+            newIdsToRemove.add(entity1.getId());
+        }
+    }
+
+    private Mover findEntityById(String id1) {
+        for (Mover entity : entities) {
+            if (entity.getId().equals(id1)) return entity;
+        }
+        for (ShipController controller : ships) {
+            if (controller.getId().equals(id1)) return controller.getShipMover();
+        }
+        return null;
     }
 
     public double getWidth() {
@@ -134,7 +192,16 @@ public class GameState implements Serializable {
         jo.put("height", height);
         jo.put("entities", createEntityArray());
         jo.put("ships", createShipArray());
+        jo.put("idsToRemove", createIdsToRemoveArray());
         return jo;
+    }
+
+    private JSONArray createIdsToRemoveArray() {
+        JSONArray ja = new JSONArray();
+        for (String id : idsToRemove) {
+            ja.add(id);
+        }
+        return ja;
     }
 
     private JSONArray createShipArray() {
@@ -173,5 +240,9 @@ public class GameState implements Serializable {
 
     public List<String> getIdsToRemove() {
         return idsToRemove;
+    }
+
+    public GameState changeState(){
+        return new GameState(width, height, entities, ships, idsToRemove, !paused);
     }
 }

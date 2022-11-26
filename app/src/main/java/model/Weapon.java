@@ -3,8 +3,7 @@ package model;
 import enums.BulletType;
 import factory.EntityFactory;
 import movement.Mover;
-import movement.util.Position;
-import movement.util.Vector;
+import movement.Position;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
@@ -24,10 +23,10 @@ public class Weapon implements Serializable{
         return bulletType;
     }
 
-    public List<Mover<Bullet>> shoot(Position position, Vector vector, String ownerId) {
+    public List<Mover<Bullet>> shoot(Position position, double vector, String ownerId) {
        List<Mover<Bullet>> bullets = new ArrayList<>();
          for (int i = 0; i < bulletsPerShot; i++) {
-              bullets.add(EntityFactory.createBulletMover(bulletType, new Position(position.getX() + i*10, position.getY() + i*10), vector, ownerId));
+              bullets.add(EntityFactory.createBulletMover(bulletType, new Position(position.getX() + i*20, position.getY() + i*10), vector, ownerId));
          }
          return bullets;
     }

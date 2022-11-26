@@ -1,6 +1,6 @@
 package generator;
 
-import movement.util.Position;
+import movement.Position;
 
 public class PositionGenerator {
 

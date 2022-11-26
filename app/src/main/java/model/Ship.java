@@ -10,6 +10,7 @@ public class Ship implements Collideable<Ship>, Entity {
     private final String id;
     private final int lives;
 
+
     public Ship(String id, int lives) {
         this.id = "starship-"+id;
         this.lives = lives;

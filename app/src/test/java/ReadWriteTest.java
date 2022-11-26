@@ -1,19 +1,14 @@
-import config.reader.ConfigManager;
-import enums.BulletType;
+import config.manager.ConfigManager;
 import factory.ConfigFactory;
-import factory.EntityFactory;
 import factory.StateFactory;
 import javafx.scene.input.KeyCode;
 import movement.KeyMovement;
-import movement.util.Position;
-import movement.util.Vector;
 import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 import state.GameState;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class ReadWriteTest {

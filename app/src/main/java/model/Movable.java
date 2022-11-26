@@ -1,7 +1,6 @@
 package model;
 
-import movement.util.Position;
-import movement.util.Vector;
+import movement.Position;
 
 public interface Movable extends Entity {
 
@@ -9,10 +8,12 @@ public interface Movable extends Entity {
 
     Movable rotate(double degrees);
     Position getPosition();
-    Vector getVector();
+    double getVector();
     double getRotationInDegrees();
 
     double getSpeed();
 
     Movable stop();
+
+    Movable accelerate();
 }

@@ -3,8 +3,7 @@ package controller;
 import edu.austral.ingsis.starships.ui.ElementModel;
 import model.*;
 import movement.Mover;
-import movement.util.Position;
-import movement.util.Vector;
+import movement.Position;
 import org.json.simple.JSONObject;
 
 import java.util.List;
@@ -69,7 +68,7 @@ public class ShipController implements Collideable<ShipController>, Showable {
         return shipMover.getPosition();
     }
 
-    public Vector getVector() {
+    public double getVector() {
         return shipMover.getVector();
     }
 
@@ -96,5 +95,13 @@ public class ShipController implements Collideable<ShipController>, Showable {
 
     public ShipController updatePosition(Position position) {
         return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getVector(), shipMover.getSpeed(), shipMover.getParser()), weapon);
+    }
+
+    public ShipController accelerate() {
+        return new ShipController(shipMover.accelerate(), weapon);
+    }
+
+    public ShipController updateMover(Collideable entity1) {
+        return new ShipController(new Mover<>((Ship) entity1,getPosition(),getRotationInDegrees(),getSpeed(),getShipMover().getParser()), weapon);
     }
 }

@@ -1,4 +1,4 @@
-package config.reader;
+package config.manager;
 
 import controller.ShipController;
 import factory.EntityFactory;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class ConfigManager {
 
     private final static String STATE_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/state.json";
-    private final static String KEYS_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/keys.json";
+    private final static String KEYS_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/playerKeys.json";
 
     public static void saveKeys(Map<String, Map<KeyMovement, KeyCode>> map) throws IOException {
 
