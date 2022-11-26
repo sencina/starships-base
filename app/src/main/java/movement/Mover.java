@@ -1,6 +1,7 @@
 package movement;
 
 import edu.austral.ingsis.starships.ui.ElementModel;
+import enums.EntityType;
 import model.Collideable;
 import model.Movable;
 import model.Showable;
@@ -31,6 +32,11 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
     @Override
     public String getId() {
         return entity.getId();
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return entity.getEntityType();
     }
 
     @Override
@@ -92,5 +98,9 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
 
     public EntityParser<T> getParser() {
         return parser;
+    }
+
+    public int getLives() {
+        return entity.getLives();
     }
 }

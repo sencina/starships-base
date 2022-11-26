@@ -1,10 +1,13 @@
 package config;
 
+import edu.austral.ingsis.starships.ui.ElementColliderType;
+import edu.austral.ingsis.starships.ui.ImageRef;
+
 public class Constants {
 
     //GAME CONSTANTS
-    public static final int GAME_WIDTH = 800;
-    public static final int GAME_HEIGHT = 800;
+    public static final int GAME_WIDTH = 1000;
+    public static final int GAME_HEIGHT = 1000;
 
     //SHIP CONSTANTS
     public static final double SHIP_WIDTH = 70;
@@ -14,7 +17,6 @@ public class Constants {
     public static final double MAX_SPEED = 50;
     public static final double SPEED_INCREMENT = 10;
     public static final double ROTATION_DEGREES = 15;
-
     public static final double P1_STARTING_X = 100;
     public static final double P1_STARTING_Y = 100;
     public static final double P2_STARTING_X = 700;
@@ -40,7 +42,7 @@ public class Constants {
     //ASTEROID CONSTANTS
     public static final int ASTEROID_SIZE = 200;
     public static final double ASTEROID_SPEED = 0.5;
-    public static final double SPAWN_PROBABILITY = 0.05;
+    public static final double SPAWN_PROBABILITY = 0.001;
 
 
     //KEY CONSTANTS
@@ -51,6 +53,23 @@ public class Constants {
     public static final String LOAD_GAME = "0";
     public static final String ONE_PLAYER = "1";
     public static final String TWO_PLAYER = "2";
+
+    //IMAGE REFERENCES
+
+    public static final ImageRef STARSHIP_IMAGE_REF = new ImageRef("starship", SHIP_HEIGHT, SHIP_WIDTH);
+    public static final ImageRef ASTEROID_IMAGE_REF = new ImageRef("asteroid", ASTEROID_SIZE, ASTEROID_SIZE);
+    public static final ImageRef BULLET_IMAGE_REF = new ImageRef("bullet", BULLET_SIZE, BULLET_SIZE);
+    public static final ImageRef CUSTOM_BULLET_IMAGE_REF = new ImageRef("custom", CUSTOM_BULLET_SIZE, CUSTOM_BULLET_SIZE);
+    public static final ImageRef LASER_IMAGE_REF = new ImageRef("laser", BULLET_SIZE, BULLET_SIZE);
+    public static final ImageRef ROCKET_IMAGE_REF = new ImageRef("rocket", BULLET_SIZE, BULLET_SIZE);
+    public static final ImageRef PRISON_MIKE_IMAGE_REF = new ImageRef("prison_mike", BULLET_SIZE, BULLET_SIZE);
+    public static final ImageRef BACKGROUND_IMAGE_REF = new ImageRef("background", GAME_WIDTH, GAME_HEIGHT);
+    public static final ElementColliderType ASTEROID_COLLIDER_TYPE = ElementColliderType.Elliptical;
+    public static final ElementColliderType SHIP_COLLIDER_TYPE = ElementColliderType.Triangular;
+    public static final ElementColliderType BULLET_COLLIDER_TYPE = ElementColliderType.Rectangular;
+    public static final double OFFSET = ASTEROID_SIZE;
+
+
 
 }
 

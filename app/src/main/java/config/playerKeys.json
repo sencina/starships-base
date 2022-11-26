@@ -1,1 +1,1 @@
-[{"id":"starship-1","map":{"SHOOT":"L","STOP":"Down","TURN_RIGHT":"Right","TURN_LEFT":"Left","ACCELERATE":"Up"}},{"id":"starship-0","map":{"SHOOT":"Space","STOP":"S","TURN_RIGHT":"D","TURN_LEFT":"A","ACCELERATE":"W"}}]
+[{"id":"STARSHIP-1","map":{"SHOOT":"L","STOP":"Down","TURN_RIGHT":"Right","TURN_LEFT":"Left","ACCELERATE":"Up"}},{"id":"STARSHIP-0","map":{"SHOOT":"Space","STOP":"S","TURN_RIGHT":"D","TURN_LEFT":"A","ACCELERATE":"W"}}]

@@ -1,8 +1,11 @@
 package edu.austral.ingsis.starships
 
+import config.Constants.*
 import config.manager.ConfigManager
 import controller.ShipController
 import edu.austral.ingsis.starships.ui.*
+import factory.EntityFactory
+import factory.StateFactory
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.collections.ObservableMap
@@ -12,8 +15,6 @@ import javafx.stage.Stage
 import movement.KeyMovement
 import movement.Mover
 import state.GameState
-import config.Constants.*;
-import factory.StateFactory
 
 private var gameState = StateFactory.createNewTwoPlayerGameState()
 private val startingShips= gameState.ships.size;
@@ -84,37 +85,73 @@ class MyStarships() : Application() {
 }
 
 class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) : EventListener<TimePassed> {
+
+    private var rotationIncrement = 0.0
     override fun handle(event: TimePassed) {
 
         val newShips = ArrayList<ShipController>(gameState.shipControllers)
         val newEntities= ArrayList<Mover<*>>()
+        val newIdsToRemove = ArrayList<String>(gameState.idsToRemove)
 
         newShips.map { it.move() }
 
         updateFacadeShips()
 
-        updateFacadeEntities(newEntities)
+        updateFacadeEntities(newEntities, newIdsToRemove)
 
         removeOutOfBoundsEntities()
 
-        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, ArrayList())
+        spawnAsteroid(newEntities)
+
+        validateVictory()
+
+        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, newIdsToRemove)
     }
 
-    private fun updateFacadeEntities(newEntities: ArrayList<Mover<*>>) {
+    private fun validateVictory() {
+        if(gameState.ships.size < startingShips){
+            MyStarships().pause()
+            println(gameState.ships[0].id+" won!")
+        }
+        if(gameState.ships.size == 0){
+            MyStarships().pause()
+            println("Lost")
+        }
+    }
+
+    private fun spawnAsteroid(newEntities: ArrayList<Mover<*>>) {
+        if (Math.random() < SPAWN_PROBABILITY){
+            val asteroidMover = EntityFactory.spawnAsteroid(GAME_WIDTH, GAME_HEIGHT)
+            newEntities.add(asteroidMover)
+        }
+    }
+
+    private fun updateFacadeEntities(newEntities: ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {
         gameState.entities.forEach {
-
             val newMover = it.move()
-            val facadeMover = newMover.toElementModel()
+            insertMoverInFacade(newMover,0.0, rotationIncrement)
+            filterEntity(newMover, newEntities, newIdsToRemove)
+        }
+    }
 
-            if (elements.containsKey(it.id)) {
-                elements[it.id]?.x?.set(newMover.position.x)
-                elements[it.id]?.y?.set(newMover.position.y)
-                elements[it.id]?.rotationInDegrees?.set(newMover.getRotationInDegrees())
+    private fun insertMoverInFacade(newMover: Mover<*>, angleOffset: Double, rotationIncrement : Double) {
+        if (elements.containsKey(newMover.id)) {
+            elements[newMover.id]?.x?.set(newMover.position.x)
+            elements[newMover.id]?.y?.set(newMover.position.y)
+            elements[newMover.id]?.rotationInDegrees?.set(newMover.getRotationInDegrees() + angleOffset + rotationIncrement)
+        } else {
+            elements[newMover.id] = newMover.toElementModel()
+        }
+    }
+
+    private fun filterEntity(newMover: Mover<*>?, newEntities: java.util.ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {
+        if (newMover != null) {
+            if (newMover.position.x <= GAME_WIDTH + OFFSET && newMover.position.y <= GAME_HEIGHT + OFFSET && newMover.position.x >= -OFFSET && newMover.position.y >= -OFFSET
+            ) {
+                newEntities.add(newMover)
             } else {
-                elements[it.id] = facadeMover
+                newIdsToRemove.add(newMover.id)
             }
-
-            newEntities.add(newMover)
         }
     }
 
@@ -126,11 +163,7 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
     private fun updateFacadeShips() {
         gameState.ships.forEach() {
-            if (elements.containsKey(it.id)) {
-                elements[it.id]?.x?.set(it.position.x)
-                elements[it.id]?.y?.set(it.position.y)
-                elements[it.id]?.rotationInDegrees?.set(it.getRotationInDegrees() + 180)
-            }
+            insertMoverInFacade(it.shipMover, 180.0, 0.0)
         }
     }
 }
@@ -139,7 +172,6 @@ class MyCollisionListener() : EventListener<Collision> {
     override fun handle(event: Collision) {
         println("${event.element1Id} ${event.element2Id}")
         gameState = gameState.collideEntities(event.element1Id, event.element2Id);
-        println(gameState.shipControllers[0].lives)
     }
 
 }

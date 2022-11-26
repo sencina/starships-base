@@ -11,7 +11,7 @@ public class ShipControllerParser implements EntityParser<Ship> {
 
     @Override
     public ElementModel toElementModel(Mover<Ship> entity) {
-        return new ElementModel(entity.getId(), entity.getPosition().getX(), entity.getPosition().getY(),SHIP_HEIGHT,SHIP_WIDTH, entity.getRotationInDegrees(), ElementColliderType.Triangular,new ImageRef("starship", 70, 70));
+        return new ElementModel(entity.getId(), entity.getPosition().getX(), entity.getPosition().getY(),SHIP_HEIGHT,SHIP_WIDTH, entity.getRotationInDegrees(), SHIP_COLLIDER_TYPE,STARSHIP_IMAGE_REF);
 
     }
 

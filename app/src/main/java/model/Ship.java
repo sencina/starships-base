@@ -1,6 +1,7 @@
 package model;
 
 import edu.austral.ingsis.starships.ui.ElementModel;
+import enums.EntityType;
 import org.json.simple.JSONObject;
 
 import java.util.Optional;
@@ -10,9 +11,12 @@ public class Ship implements Collideable<Ship>, Entity {
     private final String id;
     private final int lives;
 
+    private final EntityType entityType;
+
 
     public Ship(String id, int lives) {
-        this.id = "starship-"+id;
+        this.entityType = EntityType.STARSHIP;
+        this.id = entityType+"-"+id;
         this.lives = lives;
     }
 
@@ -39,6 +43,11 @@ public class Ship implements Collideable<Ship>, Entity {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return entityType;
     }
 
     @Override

@@ -1,23 +1,27 @@
 package model;
 
+import enums.EntityType;
 import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
-public class Asteroid implements Collideable<Asteroid>{
+public class Asteroid implements Collideable<Asteroid>, Entity{
 
     private final String id;
     private final int size;
 
+    private final EntityType type;
+
     public Asteroid(String id, int size) {
-        this.id = "asteroid-"+id;
+        this.type = EntityType.ASTEROID;
+        this.id = type+"-"+id;
         this.size = size;
     }
 
     @Override
     public Optional<Asteroid> collide(Collideable other) {
 
-        if (other.getIdType().equals("asteroid")) {
+        if (other.getEntityType().equals(type)) {
             return Optional.of(this);
         }
         if (size - other.getDamage() <= 0) {
@@ -39,6 +43,11 @@ public class Asteroid implements Collideable<Asteroid>{
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return type;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class BulletParser implements EntityParser<Bullet> {
 
     @Override
     public ElementModel toElementModel(Mover<Bullet> entity) {
-        return new ElementModel(entity.getId(), entity.getPosition().getX(), entity.getPosition().getY(), BULLET_SIZE, BULLET_SIZE, entity.getRotationInDegrees(), ElementColliderType.Rectangular, addImageRef(entity.getEntity().getType()));
+        return new ElementModel(entity.getId(), entity.getPosition().getX(), entity.getPosition().getY(), BULLET_SIZE, BULLET_SIZE, entity.getRotationInDegrees(), BULLET_COLLIDER_TYPE, addImageRef(entity.getEntity().getBulletType()));
     }
 
     private ImageRef addImageRef(BulletType type) {

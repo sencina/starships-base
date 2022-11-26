@@ -1,6 +1,7 @@
 package controller;
 
 import edu.austral.ingsis.starships.ui.ElementModel;
+import enums.EntityType;
 import model.*;
 import movement.Mover;
 import movement.Position;
@@ -46,6 +47,11 @@ public class ShipController implements Collideable<ShipController>, Showable {
     @Override
     public String getId() {
         return shipMover.getId();
+    }
+
+    @Override
+    public EntityType getEntityType() {
+        return shipMover.getEntityType();
     }
 
     @Override

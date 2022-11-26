@@ -1,6 +1,7 @@
 package model;
 
 import enums.BulletType;
+import enums.EntityType;
 import org.json.simple.JSONObject;
 
 import java.util.Optional;
@@ -11,25 +12,25 @@ public class Bullet implements Collideable<Bullet>{
     private final int damage;
     private final String ownerId;
 
-    private final BulletType type;
+    private final BulletType bulletType;
+
+    private final EntityType entityType;
 
     public Bullet(String id, String ownerId, int damage) {
-        this.id = "bullet-"+id;
-        this.damage = damage;
-        this.ownerId = ownerId;
-        this.type = BulletType.BULLET;
+        this(id,ownerId,damage, BulletType.BULLET);
     }
 
-    public Bullet(String id, String ownerId, int damage, BulletType type) {
-        this.id = "bullet-"+id;
+    public Bullet(String id, String ownerId, int damage, BulletType bulletType) {
+        this.entityType = EntityType.BULLET;
+        this.id = entityType+"-"+id;
         this.damage = damage;
         this.ownerId = ownerId;
-        this.type = type;
+        this.bulletType = bulletType;
     }
 
     @Override
     public Optional<Bullet> collide(Collideable other) {
-        if (other.getIdType().equals("bullet")) {
+        if (other.getEntityType().equals(getEntityType())) {
             return Optional.of(this);
         }
         return Optional.empty();
@@ -50,6 +51,11 @@ public class Bullet implements Collideable<Bullet>{
         return id;
     }
 
+    @Override
+    public EntityType getEntityType() {
+        return entityType;
+    }
+
     public String getOwnerId(){
         return ownerId;
     }
@@ -63,7 +69,7 @@ public class Bullet implements Collideable<Bullet>{
         return jsonObject;
     }
 
-    public BulletType getType(){
-        return type;
+    public BulletType getBulletType(){
+        return bulletType;
     }
 }

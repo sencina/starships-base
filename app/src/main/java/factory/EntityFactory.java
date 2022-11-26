@@ -2,10 +2,12 @@ package factory;
 
 import controller.ShipController;
 import enums.BulletType;
+import enums.EntityType;
 import generator.IdGenerator;
 import model.*;
 import movement.Mover;
 import movement.Position;
+import org.jetbrains.annotations.NotNull;
 import org.json.simple.JSONObject;
 import parser.AsteroidParser;
 import parser.BulletParser;
@@ -25,10 +27,9 @@ public class EntityFactory {
             };
         }
 
-        public static Mover<Bullet> createBulletMover(BulletType bulletType, Position position, double vector, String ownerId) {
-            return new Mover<>(createBullet(bulletType, ownerId), position, vector, getBulletSpeed(bulletType), new BulletParser());
-        }
-
+    public static Mover<Bullet> createBulletMover(BulletType bulletType, Position position, double vector, String ownerId) {
+        return new Mover<>(createBullet(bulletType, ownerId), position, vector, getBulletSpeed(bulletType), new BulletParser());
+    }
     private static double getBulletSpeed(BulletType bulletType) {
         return switch (bulletType) {
             case CUSTOM -> CUSTOM_BULLET_SPEED;
@@ -67,8 +68,8 @@ public class EntityFactory {
         return createShipController(LIVES,new Weapon(BULLETS_PER_SHOT, BulletType.valueOf(ACTUAL_BULLET)), new Position(P2_STARTING_X,P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED);
     }
 
-    public static Mover<Asteroid> createAsteroidMover() {
-        return new Mover<>(createAsteroid(), new Position(400,400), 0, ASTEROID_SPEED, new AsteroidParser());
+    public static Mover<Asteroid> createAsteroidMover(Position position, double rotation) {
+        return new Mover<>(createAsteroid(), position, rotation, ASTEROID_SPEED, new AsteroidParser());
     }
 
     private static Asteroid createAsteroid() {
@@ -84,15 +85,15 @@ public class EntityFactory {
     }
 
     private static <T extends Collideable<T>> Mover<T> createMover(T entity, Position position, double vector, double speed) {
-            return new Mover<T>(entity, position, vector, speed, parserFromEntityType(entity.getIdType()));
+            return new Mover<T>(entity, position, vector, speed, parserFromEntityType(entity.getEntityType()));
     }
 
-    private static EntityParser parserFromEntityType(String idType) {
-        return switch (idType) {
-            case "bullet" -> new BulletParser();
-            case "asteroid" -> new AsteroidParser();
-            case "starship" -> new ShipControllerParser();
-            default -> throw new IllegalStateException("Unexpected value: " + idType);
+    private static EntityParser parserFromEntityType(EntityType type) {
+        return switch (type) {
+            case BULLET -> new BulletParser();
+            case ASTEROID -> new AsteroidParser();
+            case STARSHIP -> new ShipControllerParser();
+            default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 
@@ -128,5 +129,13 @@ public class EntityFactory {
             double speed = (double) shipMover.get("speed");
 
             return new ShipController(new Mover<>(createShipFromJson(ship), position, rotationInDegreees, speed, new ShipControllerParser()), createWeaponFromJson(weapon));
+    }
+
+    @NotNull
+    public static Mover<Asteroid> spawnAsteroid(int gameWidth, int gameHeight) {
+        int x = (int) (Math.random() * gameWidth);
+        int y = (int) (Math.random() * gameHeight);
+        double vector = Math.random() * 360;
+        return createAsteroidMover(new Position(x,y), vector);
     }
 }

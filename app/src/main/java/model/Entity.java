@@ -1,5 +1,7 @@
 package model;
 
+import enums.EntityType;
+
 public interface Entity extends Serializable{
 
     String getId();
@@ -8,7 +10,5 @@ public interface Entity extends Serializable{
         return getId().split("-")[1];
     }
 
-    default String getIdType(){
-        return getId().split("-")[0];
-    }
+    EntityType getEntityType();
 }

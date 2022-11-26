@@ -1,20 +1,14 @@
 package state;
 
 import controller.ShipController;
-import generator.IdGenerator;
-import generator.PositionGenerator;
-import generator.SizeGenerator;
-import model.Asteroid;
+import enums.EntityType;
 import model.Collideable;
 import model.Serializable;
-import model.Ship;
 import movement.KeyMovement;
 import movement.Mover;
 import movement.Position;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import parser.AsteroidParser;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -65,7 +59,7 @@ public class GameState implements Serializable {
             case STOP -> newController = controller.stop();
         }
         newControllers.add(newController);
-        return new GameState(width, height, newEntities, newControllers, idsToRemove, paused);
+        return new GameState(width, height, newEntities, newControllers, idsToRemove, false);
     }
 
     private ShipController validatePosition(ShipController move) {
@@ -92,33 +86,6 @@ public class GameState implements Serializable {
         return null;
     }
 
-    public GameState moveEntities() {
-        if (paused) return this;
-        List<Mover> newEntities = new ArrayList<>();
-
-        if (Math.random() < 0.05) {
-            newEntities.add(new Mover<>(new Asteroid(IdGenerator.generateId(), SizeGenerator.generateSize()), PositionGenerator.generatePosition(width, height), Math.random()*360, 10, new AsteroidParser()));
-        }
-
-        List<String> newIdsToRemove = new ArrayList<>();
-        moveAndFilterInBoundsEntities(newEntities, newIdsToRemove);
-        return new GameState(width, height, newEntities, ships, newIdsToRemove, paused);
-
-    }
-
-    private void moveAndFilterInBoundsEntities(List<Mover> newEntities, List<String> newIdsToRemove) {
-        for (Mover entity : entities) {
-            Mover newEntity = entity.move();
-            if (newEntity.getPosition().getX() < width && newEntity.getPosition().getY() < height && newEntity.getPosition().getX() >= 0 && newEntity.getPosition().getY() >= 0) {
-                newEntities.add(newEntity);
-            }
-            else {
-                newIdsToRemove.add(newEntity.getId());
-            }
-        }
-
-    }
-
     public GameState collideEntities(String id1, String id2){
         List<Mover> newEntities = toMutable(new ArrayList<>(entities).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
         List<ShipController> newControllers = toMutable(new ArrayList<>(ships).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
@@ -142,7 +109,7 @@ public class GameState implements Serializable {
 
     private void addNewEntity(List<Mover> newEntities, List<ShipController> newControllers, List<String> newIdsToRemove, Mover entity1, Optional<Collideable> newEntity1) {
         if (newEntity1.isPresent()) {
-            if (entity1.getIdType().equals("starship")) {
+            if (entity1.getEntityType().equals(EntityType.STARSHIP)) {
                 ShipController controller = findShipById(entity1.getId());
                 newControllers.add(controller.updateMover(newEntity1.get()));
             }
@@ -218,24 +185,6 @@ public class GameState implements Serializable {
             ja.add(entity.toJson());
         }
         return ja;
-    }
-
-    public List<Mover> getEntitiesCopy() {
-        return new ArrayList<>(entities);
-    }
-
-    public boolean existsEntity(String id){
-        for (Mover entity : entities) {
-            if (entity.getId().equals(id)) return true;
-        }
-        return entityIsNotAController(id);
-    }
-
-    private boolean entityIsNotAController(String id) {
-        for (ShipController controller : ships) {
-            if (controller.getId().equals(id)) return true;
-        }
-        return false;
     }
 
     public List<String> getIdsToRemove() {
