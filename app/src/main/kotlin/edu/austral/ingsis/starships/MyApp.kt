@@ -16,6 +16,7 @@ import config.Constants.*;
 import factory.StateFactory
 
 private var gameState = StateFactory.createNewTwoPlayerGameState()
+private val startingShips= gameState.ships.size;
 fun main() {
     launch(MyStarships::class.java)
 }
@@ -92,6 +93,14 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
         updateFacadeShips()
 
+        updateFacadeEntities(newEntities)
+
+        removeOutOfBoundsEntities()
+
+        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, ArrayList())
+    }
+
+    private fun updateFacadeEntities(newEntities: ArrayList<Mover<*>>) {
         gameState.entities.forEach {
 
             val newMover = it.move()
@@ -107,10 +116,6 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
             newEntities.add(newMover)
         }
-
-        removeOutOfBoundsEntities()
-
-        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, ArrayList())
     }
 
     private fun removeOutOfBoundsEntities() {
