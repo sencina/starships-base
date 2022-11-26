@@ -6,16 +6,16 @@ import edu.austral.ingsis.starships.ui.ImageRef;
 public class Constants {
 
     //GAME CONSTANTS
-    public static final int GAME_WIDTH = 1000;
-    public static final int GAME_HEIGHT = 1000;
+    public static final double GAME_WIDTH = 1000;
+    public static final double GAME_HEIGHT = 1000;
 
     //SHIP CONSTANTS
     public static final double SHIP_WIDTH = 70;
     public static final double SHIP_HEIGHT = 70;
     public static final int LIVES = 3;
-    public static final int STARTING_SPEED = 10;
-    public static final double MAX_SPEED = 50;
-    public static final double SPEED_INCREMENT = 10;
+    public static final int STARTING_SPEED = 0;
+    public static final double MAX_SPEED = 3;
+    public static final double SPEED_INCREMENT = 1;
     public static final double ROTATION_DEGREES = 15;
     public static final double P1_STARTING_X = 100;
     public static final double P1_STARTING_Y = 100;

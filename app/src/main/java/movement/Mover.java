@@ -60,11 +60,6 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
     }
 
     @Override
-    public double getVector() {
-        return rotationInDegrees;
-    }
-
-    @Override
     public double getRotationInDegrees() {
         return rotationInDegrees;
     }

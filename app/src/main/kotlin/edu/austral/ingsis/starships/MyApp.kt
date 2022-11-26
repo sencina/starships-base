@@ -27,12 +27,7 @@ class MyStarships() : Application() {
     private val facade = ElementsViewFacade(imageResolver)
     private val keyTracker = KeyTracker()
 
-    companion object {
-        val STARSHIP_IMAGE_REF = ImageRef("starship", SHIP_HEIGHT, SHIP_WIDTH)
-    }
-
     override fun start(primaryStage: Stage) {
-
         addElementModels()
         addListeners()
         setScenes(primaryStage)
@@ -89,11 +84,11 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
     private var rotationIncrement = 0.0
     override fun handle(event: TimePassed) {
 
-        val newShips = ArrayList<ShipController>(gameState.shipControllers)
+        var newShips = ArrayList<ShipController>(gameState.shipControllers)
         val newEntities= ArrayList<Mover<*>>()
         val newIdsToRemove = ArrayList<String>(gameState.idsToRemove)
 
-        newShips.map { it.move() }
+        newShips = newShips.map { it.move() } as ArrayList<ShipController>
 
         updateFacadeShips()
 
@@ -136,12 +131,19 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
     private fun insertMoverInFacade(newMover: Mover<*>, angleOffset: Double, rotationIncrement : Double) {
         if (elements.containsKey(newMover.id)) {
-            elements[newMover.id]?.x?.set(newMover.position.x)
-            elements[newMover.id]?.y?.set(newMover.position.y)
+            elements[newMover.id]?.x?.set(validateX(newMover.position.x))
+            elements[newMover.id]?.y?.set(validateY(newMover.position.y))
             elements[newMover.id]?.rotationInDegrees?.set(newMover.getRotationInDegrees() + angleOffset + rotationIncrement)
         } else {
             elements[newMover.id] = newMover.toElementModel()
         }
+    }
+
+    private fun validateY(y: Double): Double {
+        return if (y < 0) GAME_HEIGHT + y else if (y > GAME_HEIGHT) y - GAME_HEIGHT else y}
+
+    private fun validateX(x: Double): Double {
+        return if (x < 0) GAME_WIDTH + x else if (x > GAME_WIDTH) x - GAME_WIDTH else x
     }
 
     private fun filterEntity(newMover: Mover<*>?, newEntities: java.util.ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {

@@ -132,7 +132,7 @@ public class EntityFactory {
     }
 
     @NotNull
-    public static Mover<Asteroid> spawnAsteroid(int gameWidth, int gameHeight) {
+    public static Mover<Asteroid> spawnAsteroid(double gameWidth, double gameHeight) {
         int x = (int) (Math.random() * gameWidth);
         int y = (int) (Math.random() * gameHeight);
         double vector = Math.random() * 360;

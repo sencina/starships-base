@@ -21,7 +21,7 @@ public class ShipController implements Collideable<ShipController>, Showable {
     }
 
     public List<Mover<Bullet>> shoot() {
-        return weapon.shoot(shipMover.getPosition(), shipMover.getVector(), shipMover.getId());
+        return weapon.shoot(shipMover.getPosition(), shipMover.getRotationInDegrees(), shipMover.getId());
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ShipController implements Collideable<ShipController>, Showable {
         if (shipOptional.isEmpty()){
             return Optional.empty();
         }
-        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getVector(), shipMover.getSpeed(), shipMover.getParser()), weapon));
+        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getRotationInDegrees(), shipMover.getSpeed(), shipMover.getParser()), weapon));
     }
 
     @Override
@@ -74,10 +74,6 @@ public class ShipController implements Collideable<ShipController>, Showable {
         return shipMover.getPosition();
     }
 
-    public double getVector() {
-        return shipMover.getVector();
-    }
-
     public double getRotationInDegrees() {
         return shipMover.getRotationInDegrees();
     }
@@ -100,7 +96,7 @@ public class ShipController implements Collideable<ShipController>, Showable {
     }
 
     public ShipController updatePosition(Position position) {
-        return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getVector(), shipMover.getSpeed(), shipMover.getParser()), weapon);
+        return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getRotationInDegrees(), shipMover.getSpeed(), shipMover.getParser()), weapon);
     }
 
     public ShipController accelerate() {
