@@ -82,6 +82,7 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
         jsonObject.put("y", position.getY());
         jsonObject.put("angle", getRotationInDegrees());
         jsonObject.put("speed", speed);
+        jsonObject.put("entityType", getEntityType().toString());
         jsonObject.put("id", getId());
         return jsonObject;
     }

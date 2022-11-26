@@ -55,6 +55,7 @@ public class Ship implements Collideable<Ship>, Entity {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", id);
         jsonObject.put("lives", lives);
+        jsonObject.put("entityType", entityType.toString());
         return jsonObject;
     }
 }

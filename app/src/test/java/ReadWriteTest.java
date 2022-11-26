@@ -25,11 +25,6 @@ public class ReadWriteTest {
     }
 
     @Test
-    public void writeKeys() throws IOException {
-        ConfigManager.saveKeys(ConfigFactory.createShipDefaultConfig());
-    }
-
-    @Test
     public void readKeys() throws IOException, ParseException {
         Map<String, Map<KeyMovement, KeyCode>> map = ConfigManager.readBindings();
         Assert.assertEquals(2, map.size());

@@ -66,6 +66,8 @@ public class Bullet implements Collideable<Bullet>{
         jsonObject.put("id", id);
         jsonObject.put("damage", damage);
         jsonObject.put("ownerId", ownerId);
+        jsonObject.put("bulletType", bulletType);
+        jsonObject.put("entityType", entityType.toString());
         return jsonObject;
     }
 

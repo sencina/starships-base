@@ -1,7 +1,7 @@
 package config.manager;
 
 import controller.ShipController;
-import factory.EntityFactory;
+import factory.JsonFactory;
 import javafx.scene.input.KeyCode;
 import movement.KeyMovement;
 import movement.Mover;
@@ -78,7 +78,7 @@ public class ConfigManager {
         List<ShipController> list = new ArrayList<>();
         for (Object o : jas) {
             JSONObject jo = (JSONObject) o;
-            list.add(EntityFactory.createShipControllerFromJson(jo));
+            list.add(JsonFactory.createShipControllerFromJson(jo));
         }
         return list;
     }
@@ -88,7 +88,7 @@ public class ConfigManager {
         List<Mover> list = new ArrayList<>();
         for (Object o : ja) {
             JSONObject entity = (JSONObject) o;
-            list.add(EntityFactory.createMoverFromJson(entity));
+            list.add(JsonFactory.createMoverFromJson(entity));
         }
 
         return list;

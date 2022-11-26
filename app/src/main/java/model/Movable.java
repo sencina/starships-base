@@ -8,7 +8,6 @@ public interface Movable extends Entity {
     Movable rotate(double degrees);
     Position getPosition();
     double getRotationInDegrees();
-
     double getSpeed();
 
     Movable stop();

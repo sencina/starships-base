@@ -5,6 +5,7 @@ import config.manager.ConfigManager
 import controller.ShipController
 import edu.austral.ingsis.starships.ui.*
 import factory.EntityFactory
+import factory.JsonFactory
 import factory.StateFactory
 import javafx.application.Application
 import javafx.application.Application.launch
@@ -124,26 +125,26 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
     private fun updateFacadeEntities(newEntities: ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {
         gameState.entities.forEach {
             val newMover = it.move()
-            insertMoverInFacade(newMover,0.0, rotationIncrement)
+            insertMoverInFacade(newMover,0.0, rotationIncrement, false)
             filterEntity(newMover, newEntities, newIdsToRemove)
         }
     }
 
-    private fun insertMoverInFacade(newMover: Mover<*>, angleOffset: Double, rotationIncrement : Double) {
+    private fun insertMoverInFacade(newMover: Mover<*>, angleOffset: Double, rotationIncrement : Double, validatePosition: Boolean) {
         if (elements.containsKey(newMover.id)) {
-            elements[newMover.id]?.x?.set(validateX(newMover.position.x))
-            elements[newMover.id]?.y?.set(validateY(newMover.position.y))
-            elements[newMover.id]?.rotationInDegrees?.set(newMover.getRotationInDegrees() + angleOffset + rotationIncrement)
+            elements[newMover.id]?.x?.set(validateX(newMover.position.x, validatePosition))
+            elements[newMover.id]?.y?.set(validateY(newMover.position.y, validatePosition))
+            elements[newMover.id]?.rotationInDegrees?.set(newMover.rotationInDegrees + angleOffset + rotationIncrement)
         } else {
             elements[newMover.id] = newMover.toElementModel()
         }
     }
 
-    private fun validateY(y: Double): Double {
-        return if (y < 0) GAME_HEIGHT + y else if (y > GAME_HEIGHT) y - GAME_HEIGHT else y}
+    private fun validateY(y: Double, validatePosition: Boolean): Double {
+        return if (y < 0 && validatePosition) GAME_HEIGHT + y else if (y > GAME_HEIGHT && validatePosition) y - GAME_HEIGHT else y}
 
-    private fun validateX(x: Double): Double {
-        return if (x < 0) GAME_WIDTH + x else if (x > GAME_WIDTH) x - GAME_WIDTH else x
+    private fun validateX(x: Double, validatePosition: Boolean): Double {
+        return if (x < 0 && validatePosition) GAME_WIDTH + x else if (x > GAME_WIDTH && validatePosition) x - GAME_WIDTH else x
     }
 
     private fun filterEntity(newMover: Mover<*>?, newEntities: java.util.ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {
@@ -165,7 +166,7 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
     private fun updateFacadeShips() {
         gameState.ships.forEach() {
-            insertMoverInFacade(it.shipMover, 180.0, 0.0)
+            insertMoverInFacade(it.shipMover, 180.0, 0.0, true)
         }
     }
 }
