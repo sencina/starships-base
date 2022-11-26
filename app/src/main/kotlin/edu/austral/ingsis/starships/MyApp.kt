@@ -165,7 +165,7 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
     }
 
     private fun updateFacadeShips() {
-        gameState.ships.forEach() {
+        gameState.ships.forEach {
             insertMoverInFacade(it.shipMover, 180.0, 0.0, true)
         }
     }
