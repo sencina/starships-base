@@ -47,6 +47,11 @@ public class Bullet implements Collideable<Bullet>{
     }
 
     @Override
+    public IdPointTuple getPoints() {
+        return new IdPointTuple(ownerId, damage);
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -74,4 +79,5 @@ public class Bullet implements Collideable<Bullet>{
     public BulletType getBulletType(){
         return bulletType;
     }
+
 }

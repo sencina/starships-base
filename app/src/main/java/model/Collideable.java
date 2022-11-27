@@ -6,6 +6,7 @@ public interface Collideable<T> extends Entity{
 
     Optional<T> collide(Collideable other);
     int getLives();
-
     int getDamage();
+
+    IdPointTuple getPoints();
 }

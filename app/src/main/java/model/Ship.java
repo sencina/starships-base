@@ -41,6 +41,11 @@ public class Ship implements Collideable<Ship>, Entity {
     }
 
     @Override
+    public IdPointTuple getPoints() {
+        return new IdPointTuple(getId(), 0);
+    }
+
+    @Override
     public String getId() {
         return id;
     }

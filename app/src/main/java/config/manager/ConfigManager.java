@@ -69,9 +69,19 @@ public class ConfigManager {
         JSONObject jo = (JSONObject) obj;
         JSONArray ja = (JSONArray) jo.get("entities");
         JSONArray jas = (JSONArray) jo.get("ships");
+        JSONArray jat = (JSONArray) jo.get("points");
 
-        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas), new ArrayList<>());
+        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas), new ArrayList<>(), createMap(jat), (boolean) jo.get("paused"));
 
+    }
+
+    private static Map<String, Integer> createMap(JSONArray jat) {
+        Map<String, Integer> map = new HashMap<>();
+        for (Object o : jat) {
+            JSONObject jo = (JSONObject) o;
+            map.put((String) jo.get("id"), (int) (long) jo.get("points"));
+        }
+        return map;
     }
 
     private static List<ShipController> fillShipList(JSONArray jas) {

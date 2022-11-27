@@ -5,7 +5,6 @@ import config.manager.ConfigManager
 import controller.ShipController
 import edu.austral.ingsis.starships.ui.*
 import factory.EntityFactory
-import factory.JsonFactory
 import factory.StateFactory
 import javafx.application.Application
 import javafx.application.Application.launch

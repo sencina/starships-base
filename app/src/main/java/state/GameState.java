@@ -9,9 +9,8 @@ import movement.Mover;
 import movement.Position;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 import static config.Constants.ROTATION_DEGREES;
 
@@ -22,24 +21,34 @@ public class GameState implements Serializable {
     private final List<Mover> entities;
     private final List<ShipController> ships;
     private final List<String> idsToRemove;
-
+    private final Map<String, Integer> points;
     private final boolean paused;
 
-    //TODO add scores map shipId integer
-
-    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove, boolean paused) {
+    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove, Map<String, Integer> points, boolean paused) {
         this.width = width;
         this.height = height;
         this.entities = entities;
         this.ships = ships;
         this.idsToRemove = idsToRemove;
+        this.points = points;
         this.paused = paused;
     }
 
-    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove) {
-        this(width, height, entities, ships, idsToRemove, false);
+    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove, Map<String, Integer> points) {
+        this(width, height, entities, ships, idsToRemove, points, false);
     }
 
+    public GameState(double width, double height, List<Mover> entities, List<ShipController> ships, List<String> idsToRemove) {
+        this(width, height, entities, ships, idsToRemove, createHashMap(ships), false);
+    }
+
+    private static Map<String, Integer> createHashMap(List<ShipController> ships) {
+        Map<String, Integer> points = new HashMap<>();
+        for (ShipController ship : ships) {
+            points.put(ship.getId(), 0);
+        }
+        return points;
+    }
 
     public GameState handleShipAction(String id, KeyMovement movement) {
 
@@ -59,7 +68,7 @@ public class GameState implements Serializable {
             case STOP -> newController = controller.stop();
         }
         newControllers.add(newController);
-        return new GameState(width, height, newEntities, newControllers, idsToRemove, false);
+        return new GameState(width, height, newEntities, newControllers, idsToRemove, points, false);
     }
 
     private ShipController validatePosition(ShipController move) {
@@ -94,13 +103,30 @@ public class GameState implements Serializable {
         Mover entity1 = findEntityById(id1);
         Mover entity2 = findEntityById(id2);
 
+        Map<String, Integer> newMap = addPoints(entity1.getEntity(), entity2.getEntity());
+
         Optional<Collideable> newEntity1 = entity1.getEntity().collide(entity2.getEntity());
         Optional<Collideable> newEntity2 = entity2.getEntity().collide(entity1.getEntity());
 
         addNewEntity(newEntities, newControllers, newIdsToRemove, entity1, newEntity1);
         addNewEntity(newEntities, newControllers, newIdsToRemove, entity2, newEntity2);
 
-        return new GameState(width, height, newEntities, newControllers, newIdsToRemove, paused);
+        return new GameState(width, height, newEntities, newControllers, newIdsToRemove, newMap, paused);
+    }
+
+    private Map<String,Integer> addPoints(Collideable points1, Collideable points2){
+        Map<String,Integer> newMap = new HashMap<>(points);
+        if(!points1.getEntityType().equals(points2.getEntityType())){
+            addPointsToMap(newMap, points1);
+            addPointsToMap(newMap, points2);
+        }
+        return newMap;
+    }
+
+    private void addPointsToMap(Map<String, Integer> newMap, Collideable points1) {
+        if(newMap.containsKey(points1.getId())){
+            newMap.put(points1.getId(), newMap.get(points1.getId()) + points1.getPoints().points());
+        }
     }
 
     private <T> List<T> toMutable(List<T> toList) {
@@ -160,6 +186,7 @@ public class GameState implements Serializable {
         jo.put("entities", createEntityArray());
         jo.put("ships", createShipArray());
         jo.put("idsToRemove", createIdsToRemoveArray());
+        jo.put("points", points);
         return jo;
     }
 
@@ -192,6 +219,6 @@ public class GameState implements Serializable {
     }
 
     public GameState changeState(){
-        return new GameState(width, height, entities, ships, idsToRemove, !paused);
+        return new GameState(width, height, entities, ships, idsToRemove, points, !paused);
     }
 }
