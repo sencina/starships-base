@@ -40,9 +40,10 @@ public class Constants {
     public static final double CUSTOM_BULLET_SPEED = 10;
 
     //ASTEROID CONSTANTS
-    public static final int ASTEROID_SIZE = 200;
+    public static final int MAX_ASTEROID_SIZE = 200;
+    public static final int MIN_ASTEROID_SIZE = 50;
     public static final double ASTEROID_SPEED = 0.5;
-    public static final double SPAWN_PROBABILITY = 0.001;
+    public static final double SPAWN_PROBABILITY = 0;//0.002;
 
 
     //KEY CONSTANTS
@@ -57,7 +58,6 @@ public class Constants {
     //IMAGE REFERENCES
 
     public static final ImageRef STARSHIP_IMAGE_REF = new ImageRef("starship", SHIP_HEIGHT, SHIP_WIDTH);
-    public static final ImageRef ASTEROID_IMAGE_REF = new ImageRef("asteroid", ASTEROID_SIZE, ASTEROID_SIZE);
     public static final ImageRef BULLET_IMAGE_REF = new ImageRef("bullet", BULLET_SIZE, BULLET_SIZE);
     public static final ImageRef CUSTOM_BULLET_IMAGE_REF = new ImageRef("custom", CUSTOM_BULLET_SIZE, CUSTOM_BULLET_SIZE);
     public static final ImageRef LASER_IMAGE_REF = new ImageRef("laser", BULLET_SIZE, BULLET_SIZE);
@@ -67,7 +67,7 @@ public class Constants {
     public static final ElementColliderType ASTEROID_COLLIDER_TYPE = ElementColliderType.Elliptical;
     public static final ElementColliderType SHIP_COLLIDER_TYPE = ElementColliderType.Triangular;
     public static final ElementColliderType BULLET_COLLIDER_TYPE = ElementColliderType.Rectangular;
-    public static final double OFFSET = ASTEROID_SIZE;
+    public static final double OFFSET = MAX_ASTEROID_SIZE;
 
 
 

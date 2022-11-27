@@ -100,7 +100,8 @@ class MyTimeListener(private val elements: ObservableMap<String, ElementModel>) 
 
         validateVictory()
 
-        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, newIdsToRemove)
+        gameState = GameState(gameState.width, gameState.height, newEntities, newShips, newIdsToRemove, gameState.points)
+        println()
     }
 
     private fun validateVictory() {
@@ -174,6 +175,7 @@ class MyCollisionListener() : EventListener<Collision> {
     override fun handle(event: Collision) {
         println("${event.element1Id} ${event.element2Id}")
         gameState = gameState.collideEntities(event.element1Id, event.element2Id);
+        println(gameState.points)
     }
 
 }

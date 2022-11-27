@@ -10,7 +10,7 @@ import org.json.simple.JSONObject;
 import java.util.List;
 import java.util.Optional;
 
-public class ShipController implements Collideable<ShipController>, Showable {
+public class ShipController implements Collideable<ShipController>, Showable, Movable {
 
     private final Mover<Ship> shipMover;
     private final Weapon weapon;
@@ -43,6 +43,11 @@ public class ShipController implements Collideable<ShipController>, Showable {
     public int getDamage() {
         return 0;
     } //No hace daño
+
+    @Override
+    public IdPointTuple getPoints() {
+        return shipMover.getEntity().getPoints();
+    }
 
     @Override
     public String getId() {

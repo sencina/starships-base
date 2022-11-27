@@ -71,7 +71,7 @@ public class ConfigManager {
         JSONArray jas = (JSONArray) jo.get("ships");
         JSONArray jat = (JSONArray) jo.get("points");
 
-        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas), new ArrayList<>(), createMap(jat), (boolean) jo.get("paused"));
+        return new GameState((double) jo.get("width"), (double) jo.get("height"), fillEntityList(ja), fillShipList(jas), new ArrayList<>(), createMap(jat));
 
     }
 

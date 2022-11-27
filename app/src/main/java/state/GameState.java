@@ -3,6 +3,8 @@ package state;
 import controller.ShipController;
 import enums.EntityType;
 import model.Collideable;
+import model.IdPointTuple;
+import model.Movable;
 import model.Serializable;
 import movement.KeyMovement;
 import movement.Mover;
@@ -96,8 +98,8 @@ public class GameState implements Serializable {
     }
 
     public GameState collideEntities(String id1, String id2){
-        List<Mover> newEntities = toMutable(new ArrayList<>(entities).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
-        List<ShipController> newControllers = toMutable(new ArrayList<>(ships).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
+        List<Mover> newEntities = filterOutIds(entities,id1,id2);
+        List<ShipController> newControllers = filterOutIds(ships,id1,id2);
         List<String> newIdsToRemove = new ArrayList<>(idsToRemove);
 
         Mover entity1 = findEntityById(id1);
@@ -115,18 +117,31 @@ public class GameState implements Serializable {
     }
 
     private Map<String,Integer> addPoints(Collideable points1, Collideable points2){
-        Map<String,Integer> newMap = new HashMap<>(points);
+        Map<String,Integer> newMap = createHashMapFromMap(points);
         if(!points1.getEntityType().equals(points2.getEntityType())){
-            addPointsToMap(newMap, points1);
-            addPointsToMap(newMap, points2);
+            addPointsToMap(newMap, points1.getPoints());
+            addPointsToMap(newMap, points2.getPoints());
         }
         return newMap;
     }
 
-    private void addPointsToMap(Map<String, Integer> newMap, Collideable points1) {
-        if(newMap.containsKey(points1.getId())){
-            newMap.put(points1.getId(), newMap.get(points1.getId()) + points1.getPoints().points());
+    private Map<String, Integer> createHashMapFromMap(Map<String, Integer> points) {
+        Map<String, Integer> newMap = new HashMap<>();
+        for (String id : points.keySet()) {
+            newMap.put(id, points.get(id));
         }
+        return newMap;
+    }
+
+    private void addPointsToMap(Map<String, Integer> newMap, IdPointTuple points1) {
+        if(newMap.containsKey(points1.id())){
+            int points = newMap.get(points1.id()) + points1.points();
+            newMap.put(points1.id(), points);
+        }
+    }
+
+    private <T extends Movable> List<T> filterOutIds(List<T> entities, String id1, String id2) {
+        return toMutable(new ArrayList<>(entities).stream().filter(entity -> !entity.getId().equals(id1) && !entity.getId().equals(id2)).toList());
     }
 
     private <T> List<T> toMutable(List<T> toList) {
@@ -186,8 +201,19 @@ public class GameState implements Serializable {
         jo.put("entities", createEntityArray());
         jo.put("ships", createShipArray());
         jo.put("idsToRemove", createIdsToRemoveArray());
-        jo.put("points", points);
+        jo.put("points", createPointsArray());
         return jo;
+    }
+
+    private JSONArray createPointsArray() {
+        JSONArray ja = new JSONArray();
+        for (Map.Entry<String, Integer> entry : points.entrySet()) {
+            JSONObject jo = new JSONObject();
+            jo.put("id", entry.getKey());
+            jo.put("points", entry.getValue());
+            ja.add(jo);
+        }
+        return ja;
     }
 
     private JSONArray createIdsToRemoveArray() {
@@ -216,6 +242,10 @@ public class GameState implements Serializable {
 
     public List<String> getIdsToRemove() {
         return idsToRemove;
+    }
+
+    public Map<String, Integer> getPoints() {
+        return points;
     }
 
     public GameState changeState(){

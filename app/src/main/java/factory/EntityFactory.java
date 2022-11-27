@@ -4,6 +4,7 @@ import controller.ShipController;
 import enums.BulletType;
 import enums.EntityType;
 import generator.IdGenerator;
+import generator.SizeGenerator;
 import model.*;
 import movement.Mover;
 import movement.Position;
@@ -53,7 +54,7 @@ public class EntityFactory {
     }
 
     private static Asteroid createAsteroid() {
-        return new Asteroid(IdGenerator.generateId(), ASTEROID_SIZE);
+        return new Asteroid(IdGenerator.generateId(), SizeGenerator.generateAsteroidSize());
     }
 
     public static Ship createShip(int lives) {
