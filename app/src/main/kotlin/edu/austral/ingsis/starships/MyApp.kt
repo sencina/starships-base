@@ -2,32 +2,29 @@ package edu.austral.ingsis.starships
 
 import config.Constants.*
 import config.manager.ConfigManager
-import controller.ShipController
 import edu.austral.ingsis.starships.adapter.Adapter
 import edu.austral.ingsis.starships.ui.*
-import factory.EntityFactory
 import factory.StateFactory
 import javafx.application.Application
 import javafx.application.Application.launch
 import javafx.geometry.Insets
+import javafx.geometry.Pos
+import javafx.scene.Cursor
 import javafx.scene.Scene
+import javafx.scene.control.Label
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.HBox
+import javafx.scene.layout.StackPane
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 import movement.KeyMovement
 import movement.Mover
-import state.GameState
-import javafx.scene.layout.HBox
-import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import javafx.scene.control.Label
-import javafx.scene.layout.StackPane
-import javafx.geometry.Pos
-import javafx.scene.Cursor
 import parser.ModelToUIParser
-import java.util.Collections
+import state.GameState
 
 private var adapter = Adapter(StateFactory.createEmptyGame(), SPAWN_PROBABILITY)
-private var startingShips= -1;
+private var startingShips= -1
 private val imageResolver = CachedImageResolver(DefaultImageResolver())
 private val facade = ElementsViewFacade(imageResolver)
 private val keyTracker = KeyTracker()
@@ -40,10 +37,10 @@ class MyStarships() : Application() {
 
     override fun start(primaryStage: Stage) {
         val lives = StackPane()
-        var livesList= addCssToLives(Label(LIVES.toString()), Label(LIVES.toString()))
-        var livesDiv = addCssToDivs(HBox(50.0), livesList[0], livesList[1])
-        var pointsList = addCssToPoints(Label("0"), Label("0"))
-        var pointsDiv = addCssToPointsList(HBox(50.0), pointsList[0], pointsList[1])
+        val livesList= addCssToLives(Label(LIVES.toString()), Label(LIVES.toString()))
+        val livesDiv = addCssToDivs(HBox(50.0), livesList[0], livesList[1])
+        val pointsList = addCssToPoints(Label("0"), Label("0"))
+        val pointsDiv = addCssToPointsList(HBox(50.0), pointsList[0], pointsList[1])
         lives.children.addAll(livesDiv, pointsDiv)
 
         val pane=StackPane()
@@ -167,12 +164,6 @@ class MyStarships() : Application() {
         lives1.id = "lives1"
         lives2.id = "lives2"
         return listOf(lives1, lives2)
-    }
-
-    fun pause(text: String, text1: String, label: Label, label1: Label) {
-        facade.stop()
-        label.text = text
-        label1.text = text1
     }
 
     override fun stop() {
