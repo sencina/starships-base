@@ -121,7 +121,7 @@ public class GameState implements Serializable {
 
     private Map<String,Integer> addPoints(Collideable points1, Collideable points2){
         Map<String,Integer> newMap = createHashMapFromMap(points);
-        if(!points1.getEntityType().equals(points2.getEntityType())){
+        if(!points1.getEntityType().equals(points2.getEntityType()) && !points1.getPoints().first().equals(points2.getPoints().first())){
             addPointsToMap(newMap, points1.getPoints());
             addPointsToMap(newMap, points2.getPoints());
         }

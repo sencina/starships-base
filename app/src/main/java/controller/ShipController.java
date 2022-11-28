@@ -105,4 +105,8 @@ public class ShipController implements Collideable<ShipController>, Movable {
     public ShipController updateMover(Collideable entity1) {
         return new ShipController(new Mover<>((Ship) entity1,getPosition(),getRotationInDegrees(),getSpeed()), weapon);
     }
+
+    public ShipController updateWeapon(Weapon weapon) {
+        return new ShipController(shipMover, weapon);
+    }
 }

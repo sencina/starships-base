@@ -3,19 +3,11 @@ package factory;
 import controller.ShipController;
 import enums.BulletType;
 import enums.EntityType;
-import model.Asteroid;
-import model.Bullet;
-import model.Ship;
-import model.Weapon;
+import enums.WeaponType;
+import model.*;
 import movement.Mover;
 import movement.Position;
 import org.json.simple.JSONObject;
-import parser.AsteroidParser;
-import parser.BulletParser;
-import parser.ShipControllerParser;
-
-import static config.Constants.BULLET_SPEED;
-import static config.Constants.CUSTOM_BULLET_SPEED;
 
 public class JsonFactory {
 
@@ -46,10 +38,12 @@ public class JsonFactory {
     }
 
     private static Weapon createWeaponFromJson(JSONObject weapon) {
-
-        int bulletsPerShot = (int) (long) weapon.get("bulletsPerShot");
+        WeaponType type = WeaponType.valueOf((String) weapon.get("weaponType"));
         BulletType bulletType = BulletType.valueOf((String) weapon.get("bulletType"));
-        return new Weapon(bulletsPerShot, bulletType);
+        return switch (type){
+            case CLASSIC_WEAPON -> new ClassicWeapon((int) (long) weapon.get("bulletsPerShot"), bulletType);
+            case DOUBLE_SIDED_WEAPON -> new DoubleSidedWeapon(bulletType);
+        };
     }
 
     private static Ship createShipFromJson(JSONObject entity) {

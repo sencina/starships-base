@@ -2,18 +2,15 @@ package factory;
 
 import controller.ShipController;
 import enums.BulletType;
-import enums.EntityType;
+import enums.WeaponType;
 import generator.IdGenerator;
 import generator.SizeGenerator;
 import model.*;
 import movement.Mover;
 import movement.Position;
 import org.jetbrains.annotations.NotNull;
-import parser.AsteroidParser;
-import parser.BulletParser;
-import parser.EntityParser;
-import parser.ShipControllerParser;
 import static config.Constants.*;
+import static config.PlayerShipsSettings.*;
 
 public class EntityFactory {
 
@@ -32,19 +29,30 @@ public class EntityFactory {
     }
 
     public static ShipController createDefaultShipControllerForTesting(){
-        return new ShipController(createDefaultShipMover(new Position(400,400), 90), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
+        return new ShipController(createDefaultShipMover(new Position(400,400), 90), new ClassicWeapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
     }
 
-    public static ShipController createShipController(int lives, Weapon weapon, Position position, double vector, int speed) {
+    public static Weapon createWeapon(WeaponType type){
+        return createWeapon(type, BulletType.valueOf(ACTUAL_BULLET));
+    }
+
+    public static Weapon createWeapon(WeaponType type, BulletType bulletType){
+        return switch (type) {
+            case CLASSIC_WEAPON -> new ClassicWeapon(BULLETS_PER_SHOT, bulletType);
+            case DOUBLE_SIDED_WEAPON -> new DoubleSidedWeapon(bulletType);
+        };
+    }
+
+    public static ShipController createShipController(int lives, ClassicWeapon weapon, Position position, double vector, int speed) {
         return new ShipController(new Mover<>(EntityFactory.createShip(lives),position, vector, speed), weapon);
     }
 
     public static ShipController createP1DefaultShipController(){
-        return new ShipController(new Mover<>(new Ship("0", LIVES),new Position(P1_STARTING_X, P1_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
+        return new ShipController(new Mover<>(new Ship("0", LIVES),new Position(P1_STARTING_X, P1_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), createWeapon(WeaponType.valueOf(P1_WEAPON), BulletType.valueOf(P1_BULLET)));
     }
 
     public static ShipController createP2DefaultShipController(){
-        return new ShipController(new Mover<>(new Ship("1", LIVES),new Position(P2_STARTING_X, P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
+        return new ShipController(new Mover<>(new Ship("1", LIVES),new Position(P2_STARTING_X, P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), createWeapon(WeaponType.valueOf(P2_WEAPON), BulletType.valueOf(P2_BULLET)));
     }
 
     public static Mover<Asteroid> createAsteroidMover(Position position, double rotation) {
@@ -79,15 +87,6 @@ public class EntityFactory {
         return switch (bulletType) {
             case CUSTOM -> CUSTOM_BULLET_SPEED;
             default -> BULLET_SPEED;
-        };
-    }
-
-    private static EntityParser parserFromEntityType(EntityType type) {
-        return switch (type) {
-            case BULLET -> new BulletParser();
-            case ASTEROID -> new AsteroidParser();
-            case STARSHIP -> new ShipControllerParser();
-            default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 

@@ -1,7 +1,7 @@
 import controller.ShipController;
 import enums.BulletType;
 import factory.EntityFactory;
-import model.Weapon;
+import model.ClassicWeapon;
 import movement.Position;
 import org.junit.*;
 
@@ -21,7 +21,7 @@ public class MovementTest {
     @Test
     public void testRotate() {
 
-        ShipController controller = new ShipController(EntityFactory.createDefaultShipMover(new Position(0,0), 90), new Weapon(2, BulletType.BULLET));
+        ShipController controller = new ShipController(EntityFactory.createDefaultShipMover(new Position(0,0), 90), new ClassicWeapon(2, BulletType.BULLET));
 
         ShipController controller2 = controller.rotate(15);
         System.out.println(controller2.getShipMover().getRotationInDegrees());

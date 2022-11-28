@@ -30,7 +30,7 @@ public class Bullet implements Collideable<Bullet>{
 
     @Override
     public Optional<Bullet> collide(Collideable other) {
-        if (other.getEntityType().equals(getEntityType())) {
+        if (other.getEntityType().equals(getEntityType()) || other.getId().equals(ownerId)) {
             return Optional.of(this);
         }
         return Optional.empty();
