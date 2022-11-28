@@ -226,7 +226,7 @@ class MyStarships() : Application() {
             }
 
             private fun pauseGame() {
-                pause("R: Resume","G: Save", label, label1)
+                pause("$PAUSE_GAME: Resume", "$SAVE_GAME: Save", label, label1)
                 gameState = gameState.changeState()
             }
 
