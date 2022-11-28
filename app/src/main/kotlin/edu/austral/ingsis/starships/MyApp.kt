@@ -3,6 +3,7 @@ package edu.austral.ingsis.starships
 import config.Constants.*
 import config.manager.ConfigManager
 import controller.ShipController
+import edu.austral.ingsis.starships.adapter.Adapter
 import edu.austral.ingsis.starships.ui.*
 import factory.EntityFactory
 import factory.StateFactory
@@ -25,7 +26,7 @@ import javafx.scene.Cursor
 import parser.ModelToUIParser
 import java.util.Collections
 
-private var gameState = StateFactory.createEmptyGame()
+private var adapter = Adapter(StateFactory.createEmptyGame(), SPAWN_PROBABILITY)
 private var startingShips= -1;
 fun main() {
     launch(MyStarships::class.java)
@@ -77,7 +78,7 @@ class MyStarships() : Application() {
         facade.collisionsListenable.addEventListener(object : EventListener<Collision> {
             override fun handle(event: Collision) {
                 println("${event.element1Id} ${event.element2Id}")
-                gameState = gameState.collideEntities(event.element1Id, event.element2Id);
+                adapter = Adapter(adapter.gameState.collideEntities(event.element1Id,event.element2Id), SPAWN_PROBABILITY)
             }
         })
 
@@ -85,40 +86,29 @@ class MyStarships() : Application() {
 
             override fun handle(event: TimePassed) {
 
-                var newShips = ArrayList<ShipController>(gameState.shipControllers)
-                val newEntities = ArrayList<Mover<*>>()
-                val newIdsToRemove = ArrayList<String>(gameState.idsToRemove)
+                adapter = adapter.moveEntities()
 
-                newShips = newShips.map { it.move() } as ArrayList<ShipController>
+                updateFacadeEntities()
 
                 updateFacadeShips()
 
-                updateFacadeEntities(newEntities, newIdsToRemove)
-
                 removeOutOfBoundsEntities()
-
-                spawnAsteroid(newEntities)
 
                 updateLives(label, label1)
 
                 updateScore(score1,score2)
 
                 validateVictory(label, label1)
-
-                gameState = GameState(
-                    gameState.width, gameState.height, newEntities, newShips, newIdsToRemove, gameState.points,
-                    gameState.isPaused
-                )
             }
 
             private fun updateScore(score1: Label, score2: Label) {
-                score1.text = assertExistence(gameState.points["STARSHIP-0"].toString())
-                score2.text = assertExistence(gameState.points["STARSHIP-1"].toString())
+                score1.text = assertExistence(adapter.gameState.points["STARSHIP-0"].toString())
+                score2.text = assertExistence(adapter.gameState.points["STARSHIP-1"].toString())
             }
 
             private fun updateLives(label: Label, label1: Label) {
-                label.text = assertExistence(gameState.findShipById("STARSHIP-0")?.lives.toString())
-                label1.text = assertExistence(gameState.findShipById("STARSHIP-1")?.lives.toString())
+                label.text = assertExistence(adapter.gameState.findShipById("STARSHIP-0")?.lives.toString())
+                label1.text = assertExistence(adapter.gameState.findShipById("STARSHIP-1")?.lives.toString())
             }
 
             private fun assertExistence(toString: String): String {
@@ -126,28 +116,19 @@ class MyStarships() : Application() {
             }
 
             private fun validateVictory(label: Label, label1: Label) {
-                if (gameState.ships.size == 1 && startingShips>1 && !gameState.isPaused) {
-                    pause(gameState.ships[0].id + " won!", "",label, label1)
+                if (adapter.gameState.ships.size == 1 && startingShips>1 && !adapter.gameState.isPaused) {
+                    pause(adapter.gameState.ships[0].id + " won!", "",label, label1)
                     facade.elements.clear()
                 }
-                if (gameState.ships.size == 0 && !gameState.isPaused) {
+                if (adapter.gameState.ships.size == 0 && !adapter.gameState.isPaused) {
                     pause("LOST","", label, label1)
                     facade.elements.clear()
                 }
             }
 
-            private fun spawnAsteroid(newEntities: ArrayList<Mover<*>>) {
-                if (Math.random() < SPAWN_PROBABILITY && !gameState.isPaused) {
-                    val asteroidMover = EntityFactory.spawnAsteroid(GAME_WIDTH, GAME_HEIGHT)
-                    newEntities.add(asteroidMover)
-                }
-            }
-
-            private fun updateFacadeEntities(newEntities: ArrayList<Mover<*>>, newIdsToRemove: ArrayList<String>) {
-                gameState.entities.forEach {
-                    val newMover = it.move()
-                    insertMoverInFacade(newMover, 0.0, false)
-                    filterEntity(newMover, newEntities, newIdsToRemove)
+            private fun updateFacadeEntities() {
+                adapter.gameState.entities.forEach {
+                    insertMoverInFacade(it, 0.0, false)
                 }
             }
 
@@ -169,29 +150,14 @@ class MyStarships() : Application() {
                 return if (x < 0 && validatePosition) GAME_WIDTH + x else if (x > GAME_WIDTH && validatePosition) x - GAME_WIDTH else x
             }
 
-            private fun filterEntity(
-                newMover: Mover<*>?,
-                newEntities: java.util.ArrayList<Mover<*>>,
-                newIdsToRemove: ArrayList<String>
-            ) {
-                if (newMover != null) {
-                    if (newMover.position.x <= GAME_WIDTH + OFFSET && newMover.position.y <= GAME_HEIGHT + OFFSET && newMover.position.x >= -OFFSET && newMover.position.y >= -OFFSET
-                    ) {
-                        newEntities.add(newMover)
-                    } else {
-                        newIdsToRemove.add(newMover.id)
-                    }
-                }
-            }
-
             private fun removeOutOfBoundsEntities() {
-                gameState.idsToRemove.forEach {
+                adapter.gameState.idsToRemove.forEach {
                     facade.elements.remove(it)
                 }
             }
 
             private fun updateFacadeShips() {
-                gameState.ships.forEach {
+                adapter.gameState.ships.forEach {
                     insertMoverInFacade(it.shipMover, 180.0, true)
                 }
             }
@@ -205,10 +171,10 @@ class MyStarships() : Application() {
 
                 handlePauseResume(key)
 
-                gameState.ships.forEach { controller ->
+                adapter.gameState.ships.forEach { controller ->
                     keyBindMap[controller.id]?.forEach { (movement, keyCode) ->
                         if (key == keyCode) {
-                            gameState = gameState.handleShipAction(controller.id, movement)
+                            adapter = Adapter(adapter.gameState.handleShipAction(controller.id, movement), SPAWN_PROBABILITY)
                         }
                     }
                 }
@@ -220,19 +186,19 @@ class MyStarships() : Application() {
                 when (key) {
                     keyCodeOf(PAUSE_GAME) -> pauseGame()
                     keyCodeOf(RESUME_GAME) -> resumeGame()
-                    keyCodeOf(SAVE_GAME) -> ConfigManager.saveState(gameState)
+                    keyCodeOf(SAVE_GAME) -> ConfigManager.saveState(adapter.gameState)
                     else -> {}
                 }
             }
 
             private fun pauseGame() {
                 pause("$PAUSE_GAME: Resume", "$SAVE_GAME: Save", label, label1)
-                gameState = gameState.changeState()
+                adapter = Adapter(adapter.gameState.changeState(), SPAWN_PROBABILITY)
             }
 
             private fun resumeGame() {
                 facade.start()
-                gameState = gameState.changeState()
+                adapter = Adapter(adapter.gameState.changeState(), SPAWN_PROBABILITY)
             }
 
             private fun keyCodeOf(string: String): Any {
@@ -309,7 +275,7 @@ class MyStarships() : Application() {
         }
         onePlayer.setOnMouseClicked {
             scene.root = pane
-            gameState = newGameState
+            adapter = Adapter(newGameState, SPAWN_PROBABILITY)
             newGameState.addElementsToView(facade.elements)
             startingShips = newGameState.ships.size
         }
