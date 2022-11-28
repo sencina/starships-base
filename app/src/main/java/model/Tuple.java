@@ -2,12 +2,12 @@ package model;
 
 import org.json.simple.JSONObject;
 
-public record IdPointTuple(String id, int points) implements Serializable {
+public record Tuple<K,V>(K first, V second) implements Serializable {
     @Override
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", id);
-        jsonObject.put("points", points);
+        jsonObject.put("id", first);
+        jsonObject.put("points", second);
         return jsonObject;
     }
 }

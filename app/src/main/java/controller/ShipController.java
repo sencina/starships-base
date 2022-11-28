@@ -1,6 +1,5 @@
 package controller;
 
-import edu.austral.ingsis.starships.ui.ElementModel;
 import enums.EntityType;
 import model.*;
 import movement.Mover;
@@ -10,7 +9,7 @@ import org.json.simple.JSONObject;
 import java.util.List;
 import java.util.Optional;
 
-public class ShipController implements Collideable<ShipController>, Showable, Movable {
+public class ShipController implements Collideable<ShipController>, Movable {
 
     private final Mover<Ship> shipMover;
     private final Weapon weapon;
@@ -31,7 +30,7 @@ public class ShipController implements Collideable<ShipController>, Showable, Mo
         if (shipOptional.isEmpty()){
             return Optional.empty();
         }
-        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getRotationInDegrees(), shipMover.getSpeed(), shipMover.getParser()), weapon));
+        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getRotationInDegrees(), shipMover.getSpeed()), weapon));
     }
 
     @Override
@@ -45,7 +44,7 @@ public class ShipController implements Collideable<ShipController>, Showable, Mo
     } //No hace daño
 
     @Override
-    public IdPointTuple getPoints() {
+    public Tuple getPoints() {
         return shipMover.getEntity().getPoints();
     }
 
@@ -95,13 +94,8 @@ public class ShipController implements Collideable<ShipController>, Showable, Mo
         return shipMover;
     }
 
-    @Override
-    public ElementModel toElementModel() {
-        return shipMover.toElementModel();
-    }
-
     public ShipController updatePosition(Position position) {
-        return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getRotationInDegrees(), shipMover.getSpeed(), shipMover.getParser()), weapon);
+        return new ShipController(new Mover<>(shipMover.getEntity(), position, shipMover.getRotationInDegrees(), shipMover.getSpeed()), weapon);
     }
 
     public ShipController accelerate() {
@@ -109,6 +103,6 @@ public class ShipController implements Collideable<ShipController>, Showable, Mo
     }
 
     public ShipController updateMover(Collideable entity1) {
-        return new ShipController(new Mover<>((Ship) entity1,getPosition(),getRotationInDegrees(),getSpeed(),getShipMover().getParser()), weapon);
+        return new ShipController(new Mover<>((Ship) entity1,getPosition(),getRotationInDegrees(),getSpeed()), weapon);
     }
 }

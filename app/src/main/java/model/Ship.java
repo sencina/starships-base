@@ -1,6 +1,5 @@
 package model;
 
-import edu.austral.ingsis.starships.ui.ElementModel;
 import enums.EntityType;
 import org.json.simple.JSONObject;
 
@@ -41,8 +40,8 @@ public class Ship implements Collideable<Ship>, Entity {
     }
 
     @Override
-    public IdPointTuple getPoints() {
-        return new IdPointTuple(getId(), 0);
+    public Tuple<String, Integer> getPoints() {
+        return new Tuple<>(getId(), 0);
     }
 
     @Override

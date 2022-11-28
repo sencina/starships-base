@@ -5,6 +5,8 @@ import state.GameState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import static config.Constants.*;
 
 public class StateFactory {
@@ -18,10 +20,14 @@ public class StateFactory {
     }
 
     public static GameState createNewOnePlayerGameState(){
-        return new GameState(GAME_WIDTH,GAME_HEIGHT, List.of(EntityFactory.createAsteroidMover(new Position(400,400),0)), List.of(EntityFactory.createP1DefaultShipController()), new ArrayList<>());
+        return new GameState(GAME_WIDTH,GAME_HEIGHT, List.of(), List.of(EntityFactory.createP1DefaultShipController()), new ArrayList<>());
     }
 
     public static GameState createNewTwoPlayerGameState(){
-        return new GameState(GAME_WIDTH,GAME_HEIGHT, List.of(EntityFactory.createAsteroidMover(new Position(400,400),0)), List.of(EntityFactory.createP1DefaultShipController(), EntityFactory.createP2DefaultShipController()), new ArrayList<>());
+        return new GameState(GAME_WIDTH,GAME_HEIGHT, List.of(), List.of(EntityFactory.createP1DefaultShipController(), EntityFactory.createP2DefaultShipController()), new ArrayList<>());
+    }
+
+    public static GameState createEmptyGame(){
+        return new GameState(GAME_WIDTH,GAME_HEIGHT, List.of(), List.of(), new ArrayList<>(), Map.of(),true);
     }
 }

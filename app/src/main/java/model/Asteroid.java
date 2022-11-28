@@ -41,8 +41,8 @@ public class Asteroid implements Collideable<Asteroid>, Entity{
     }
 
     @Override
-    public IdPointTuple getPoints() {
-        return new IdPointTuple(getId(), 0);
+    public Tuple<String,Integer> getPoints() {
+        return new Tuple<>(getId(), 0);
     }
 
     @Override

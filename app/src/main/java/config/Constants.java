@@ -43,8 +43,7 @@ public class Constants {
     public static final int MAX_ASTEROID_SIZE = 200;
     public static final int MIN_ASTEROID_SIZE = 50;
     public static final double ASTEROID_SPEED = 0.5;
-    public static final double SPAWN_PROBABILITY = 0;//0.002;
-
+    public static final double SPAWN_PROBABILITY = 0.002;
 
     //KEY CONSTANTS
     public static final String PAUSE_GAME = "P";

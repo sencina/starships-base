@@ -1,9 +1,11 @@
 package state;
 
 import controller.ShipController;
+import edu.austral.ingsis.starships.ui.ElementModel;
 import enums.EntityType;
+import javafx.collections.ObservableMap;
 import model.Collideable;
-import model.IdPointTuple;
+import model.Tuple;
 import model.Movable;
 import model.Serializable;
 import movement.KeyMovement;
@@ -11,6 +13,7 @@ import movement.Mover;
 import movement.Position;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import parser.ModelToUIParser;
 
 import java.util.*;
 
@@ -133,10 +136,10 @@ public class GameState implements Serializable {
         return newMap;
     }
 
-    private void addPointsToMap(Map<String, Integer> newMap, IdPointTuple points1) {
-        if(newMap.containsKey(points1.id())){
-            int points = newMap.get(points1.id()) + points1.points();
-            newMap.put(points1.id(), points);
+    private void addPointsToMap(Map<String, Integer> newMap, Tuple<String,Integer> points1) {
+        if(newMap.containsKey(points1.first())){
+            int points = newMap.get(points1.first()) + (int) points1.second();
+            newMap.put(points1.first(), points);
         }
     }
 
@@ -155,7 +158,7 @@ public class GameState implements Serializable {
                 newControllers.add(controller.updateMover(newEntity1.get()));
             }
             else {
-                newEntities.add(new Mover(newEntity1.get(), entity1.getPosition(), entity1.getRotationInDegrees(), entity1.getSpeed(), entity1.getParser()));
+                newEntities.add(new Mover(newEntity1.get(), entity1.getPosition(), entity1.getRotationInDegrees(), entity1.getSpeed()));
             }
         }
         else {
@@ -250,5 +253,18 @@ public class GameState implements Serializable {
 
     public GameState changeState(){
         return new GameState(width, height, entities, ships, idsToRemove, points, !paused);
+    }
+
+    public void addElementsToView(ObservableMap<String, ElementModel> elements){
+        for (Mover entity : entities) {
+            elements.put(entity.getId(), ModelToUIParser.parseModelToUIModel(entity));
+        }
+        for (ShipController ship : ships) {
+            elements.put(ship.getId(), ModelToUIParser.parseModelToUIModel(ship.getShipMover()));
+        }
+    }
+
+    public boolean isPaused(){
+        return paused;
     }
 }

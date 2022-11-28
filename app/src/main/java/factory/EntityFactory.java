@@ -29,7 +29,7 @@ public class EntityFactory {
         }
 
     public static Mover<Bullet> createBulletMover(BulletType bulletType, Position position, double vector, String ownerId) {
-        return new Mover<>(createBullet(bulletType, ownerId), position, vector, getBulletSpeed(bulletType), new BulletParser());
+        return new Mover<>(createBullet(bulletType, ownerId), position, vector, getBulletSpeed(bulletType));
     }
 
 
@@ -38,7 +38,7 @@ public class EntityFactory {
     }
 
     public static ShipController createShipController(int lives, Weapon weapon, Position position, double vector, int speed) {
-        return new ShipController(new Mover<>(EntityFactory.createShip(lives),position, vector, speed, new ShipControllerParser()), weapon);
+        return new ShipController(new Mover<>(EntityFactory.createShip(lives),position, vector, speed), weapon);
     }
 
     public static ShipController createP1DefaultShipController(){
@@ -50,7 +50,7 @@ public class EntityFactory {
     }
 
     public static Mover<Asteroid> createAsteroidMover(Position position, double rotation) {
-        return new Mover<>(createAsteroid(), position, rotation, ASTEROID_SPEED, new AsteroidParser());
+        return new Mover<>(createAsteroid(), position, rotation, ASTEROID_SPEED);
     }
 
     private static Asteroid createAsteroid() {
@@ -62,11 +62,11 @@ public class EntityFactory {
     }
 
     public static Mover<Ship> createDefaultShipMover(Position position, double vector) {
-        return new Mover<>(createShip(LIVES), position, vector, STARTING_SPEED, new ShipControllerParser());
+        return new Mover<>(createShip(LIVES), position, vector, STARTING_SPEED);
     }
 
     private static <T extends Collideable<T>> Mover<T> createMover(T entity, Position position, double vector, double speed) {
-            return new Mover<T>(entity, position, vector, speed, parserFromEntityType(entity.getEntityType()));
+            return new Mover<T>(entity, position, vector, speed);
     }
 
     @NotNull

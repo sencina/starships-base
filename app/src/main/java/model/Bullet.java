@@ -47,8 +47,8 @@ public class Bullet implements Collideable<Bullet>{
     }
 
     @Override
-    public IdPointTuple getPoints() {
-        return new IdPointTuple(ownerId, damage);
+    public Tuple<String,Integer> getPoints() {
+        return new Tuple<>(ownerId, damage);
     }
 
     @Override

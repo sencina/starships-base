@@ -25,12 +25,11 @@ dependencies {
     implementation("edu.austral.ingsis.starships:starships-ui:1.0.0")
     implementation("junit:junit:4.13.1")
     implementation ("com.googlecode.json-simple:json-simple:1.1.1")
-    testImplementation("org.testng:testng:7.1.0")
 }
 
 javafx {
     version = "18"
-    modules = listOf("javafx.graphics")
+    modules = listOf("javafx.graphics", "javafx.controls")
 }
 
 application {

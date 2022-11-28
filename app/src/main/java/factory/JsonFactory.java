@@ -28,8 +28,8 @@ public class JsonFactory {
         double speed = (double) mover.get("speed");
 
         return switch (type) {
-            case BULLET -> new Mover<Bullet>(createBulletFromJson((JSONObject) mover.get("entity")), position, rotationInDegrees, speed, new BulletParser());
-            case ASTEROID -> new Mover<Asteroid>(createAsteroidFromJson((JSONObject) mover.get("entity")), position, rotationInDegrees, speed, new AsteroidParser());
+            case BULLET -> new Mover<Bullet>(createBulletFromJson((JSONObject) mover.get("entity")), position, rotationInDegrees, speed);
+            case ASTEROID -> new Mover<Asteroid>(createAsteroidFromJson((JSONObject) mover.get("entity")), position, rotationInDegrees, speed);
             default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
@@ -68,6 +68,6 @@ public class JsonFactory {
         double rotationInDegreees = (double) shipMover.get("angle");
         double speed = (double) shipMover.get("speed");
 
-        return new ShipController(new Mover<>(createShipFromJson(ship), position, rotationInDegreees, speed, new ShipControllerParser()), createWeaponFromJson(weapon));
+        return new ShipController(new Mover<>(createShipFromJson(ship), position, rotationInDegreees, speed), createWeaponFromJson(weapon));
     }
 }

@@ -8,5 +8,5 @@ public interface Collideable<T> extends Entity{
     int getLives();
     int getDamage();
 
-    IdPointTuple getPoints();
+    Tuple<String, Integer> getPoints();
 }

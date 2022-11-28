@@ -11,19 +11,17 @@ import parser.EntityParser;
 import static config.Constants.MAX_SPEED;
 import static config.Constants.SPEED_INCREMENT;
 
-public class Mover<T extends Collideable<T>> implements Movable, Showable {
+public class Mover<T extends Collideable<T>> implements Movable {
     private final T entity;
     private final Position position;
     private final double rotationInDegrees;
     private final double speed;
 
-    private final EntityParser<T> parser;
-    public Mover(T entity, Position position, double rotationInDegrees, double speed, EntityParser<T> parser) {
+    public Mover(T entity, Position position, double rotationInDegrees, double speed) {
         this.entity = entity;
         this.position = position;
         this.rotationInDegrees = rotationInDegrees;
         this.speed = speed;
-        this.parser = parser;
     }
 
     public T getEntity(){
@@ -41,17 +39,17 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
 
     @Override
     public Mover<T> move() {
-        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed, parser);
+        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed);
     }
 
     @Override
     public Mover<T> accelerate() {
-        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed <= MAX_SPEED ? speed + SPEED_INCREMENT : speed, parser);
+        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed <= MAX_SPEED ? speed + SPEED_INCREMENT : speed);
     }
 
     @Override
     public Mover<T> rotate(double degrees) {
-        return new Mover<>(entity, position, rotationInDegrees+degrees, speed, parser);
+        return new Mover<>(entity, position, rotationInDegrees+degrees, speed);
     }
 
     @Override
@@ -71,7 +69,7 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
 
     @Override
     public Mover<T> stop() {
-        return new Mover<>(entity, position, rotationInDegrees, 0, parser);
+        return new Mover<>(entity, position, rotationInDegrees, 0);
     }
 
     @Override
@@ -85,15 +83,6 @@ public class Mover<T extends Collideable<T>> implements Movable, Showable {
         jsonObject.put("entityType", getEntityType().toString());
         jsonObject.put("id", getId());
         return jsonObject;
-    }
-
-    @Override
-    public ElementModel toElementModel() {
-        return parser.toElementModel(this);
-    }
-
-    public EntityParser<T> getParser() {
-        return parser;
     }
 
     public int getLives() {
