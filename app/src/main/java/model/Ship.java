@@ -41,7 +41,7 @@ public class Ship implements Collideable<Ship>, Entity {
 
     @Override
     public Tuple<String, Integer> getPoints() {
-        return new Tuple<>(getId(), 0);
+        return new Tuple<>(getId(), -lives);
     }
 
     @Override

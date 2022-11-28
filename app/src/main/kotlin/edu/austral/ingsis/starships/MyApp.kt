@@ -15,7 +15,6 @@ import javafx.stage.Stage
 import movement.KeyMovement
 import movement.Mover
 import state.GameState
-import kotlin.system.exitProcess
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -24,6 +23,7 @@ import javafx.scene.layout.StackPane
 import javafx.geometry.Pos
 import javafx.scene.Cursor
 import parser.ModelToUIParser
+import java.util.Collections
 
 private var gameState = StateFactory.createEmptyGame()
 private var startingShips= -1;
@@ -39,23 +39,41 @@ class MyStarships() : Application() {
     override fun start(primaryStage: Stage) {
         val lives = StackPane()
         var livesList= addCssToLives(Label(LIVES.toString()), Label(LIVES.toString()))
-        var divList = addCssToDivs(HBox(50.0), HBox(50.0), livesList[0], livesList[1])
-        lives.children.addAll(divList)
+        var livesDiv = addCssToDivs(HBox(50.0), livesList[0], livesList[1])
+        var pointsList = addCssToPoints(Label("0"), Label("0"))
+        var pointsDiv = addCssToPointsList(HBox(50.0), pointsList[0], pointsList[1])
+        lives.children.addAll(livesDiv, pointsDiv)
 
         val pane=StackPane()
         val layout = VBox(100.0)
 
         val scene = setGameScene(pane, lives, layout, primaryStage)
 
-        //Initial Menu
         initializeMenu(layout, scene, pane)
 
-        addListeners()
+        addListeners(livesList[0], livesList[1], pointsList[0], pointsList[1])
 
         startGame(primaryStage)
     }
 
-    private fun addListeners() {
+    private fun addCssToPointsList(hBox: HBox, label: Label, label1: Label): HBox {
+        hBox.alignment= Pos.TOP_RIGHT
+        hBox.children.addAll(label, label1)
+        hBox.padding= Insets(10.0,10.0,10.0,10.0)
+        return hBox
+    }
+
+    private fun addCssToPoints(label: Label, label1: Label): List<Label> {
+        label.style = "-fx-font-family: VT323; -fx-font-size: 100"
+        label1.style = "-fx-font-family: VT323; -fx-font-size: 100"
+        label.textFill = Color.BLACK
+        label1.textFill = Color.BLACK
+        label.id = "points1"
+        label1.id = "points2"
+        return listOf(label, label1)
+    }
+
+    private fun addListeners(label: Label, label1: Label, score1: Label, score2: Label) {
         facade.collisionsListenable.addEventListener(object : EventListener<Collision> {
             override fun handle(event: Collision) {
                 println("${event.element1Id} ${event.element2Id}")
@@ -81,23 +99,39 @@ class MyStarships() : Application() {
 
                 spawnAsteroid(newEntities)
 
+                updateLives(label, label1)
+
+                updateScore(score1,score2)
+
+                validateVictory(label, label1)
+
                 gameState = GameState(
                     gameState.width, gameState.height, newEntities, newShips, newIdsToRemove, gameState.points,
                     gameState.isPaused
                 )
             }
 
-            private fun validateVictory() {
-                if (gameState.ships.size < startingShips) {
-                    MyStarships().pause()
-                    //println(gameState.ships[0].id+" won!")
+            private fun updateScore(score1: Label, score2: Label) {
+                score1.text = assertExistence(gameState.points["STARSHIP-0"].toString())
+                score2.text = assertExistence(gameState.points["STARSHIP-1"].toString())
+            }
+
+            private fun updateLives(label: Label, label1: Label) {
+                label.text = assertExistence(gameState.findShipById("STARSHIP-0")?.lives.toString())
+                label1.text = assertExistence(gameState.findShipById("STARSHIP-1")?.lives.toString())
+            }
+
+            private fun assertExistence(toString: String): String {
+                return if (toString == "null") "" else toString
+            }
+
+            private fun validateVictory(label: Label, label1: Label) {
+                if (gameState.ships.size == 1 && startingShips>1 && !gameState.isPaused) {
+                    pause(gameState.ships[0].id + " won!", "",label, label1)
                     facade.elements.clear()
-                    //addMessagetoScreen(gameState.ships[0].id+" won!")
-                    exitProcess(0)
                 }
-                if (gameState.ships.size == 0) {
-                    MyStarships().pause()
-                    println("Lost")
+                if (gameState.ships.size == 0 && !gameState.isPaused) {
+                    pause("LOST","", label, label1)
                     facade.elements.clear()
                 }
             }
@@ -192,7 +226,7 @@ class MyStarships() : Application() {
             }
 
             private fun pauseGame() {
-                facade.stop()
+                pause("R: Resume","G: Save", label, label1)
                 gameState = gameState.changeState()
             }
 
@@ -248,7 +282,7 @@ class MyStarships() : Application() {
         val onePlayer = Label("One Player")
         addCssToLabelMenuOption(onePlayer, scene, pane, StateFactory.createNewOnePlayerGameState())
 
-        val twoPlayer = Label("Two Player")
+        val twoPlayer = Label("Two Players")
         addCssToLabelMenuOption(twoPlayer, scene, pane, StateFactory.createNewTwoPlayerGameState())
 
         val loadGame = Label("Load Game")
@@ -276,7 +310,8 @@ class MyStarships() : Application() {
         onePlayer.setOnMouseClicked {
             scene.root = pane
             gameState = newGameState
-            gameState.addElementsToView(facade.elements)
+            newGameState.addElementsToView(facade.elements)
+            startingShips = newGameState.ships.size
         }
     }
 
@@ -290,27 +325,27 @@ class MyStarships() : Application() {
         layout.id = "pane"
     }
 
-    private fun addCssToDivs(div1: HBox, div2: HBox, lives1: Label, lives2: Label): List<HBox> {
+    private fun addCssToDivs(div1: HBox, lives1: Label, lives2: Label): HBox {
         div1.alignment= Pos.TOP_LEFT
-        div2.alignment= Pos.TOP_CENTER
         div1.children.addAll(lives1, lives2)
         div1.padding= Insets(10.0,10.0,10.0,10.0)
-        div2.padding= Insets(10.0,10.0,10.0,10.0)
-        return listOf<HBox>(div1, div2)
+        return div1
     }
 
     private fun addCssToLives(lives1: Label, lives2: Label): List<Label> {
         lives1.style = "-fx-font-family: VT323; -fx-font-size: 100"
         lives2.style = "-fx-font-family: VT323; -fx-font-size: 100"
-        lives1.textFill = Color.color(0.9, 0.9, 0.9)
-        lives2.textFill = Color.color(0.9, 0.9, 0.9)
+        lives1.textFill = Color.BLACK
+        lives2.textFill = Color.BLACK
         lives1.id = "lives1"
         lives2.id = "lives2"
         return listOf(lives1, lives2)
     }
 
-    fun pause(){
+    fun pause(text: String, text1: String, label: Label, label1: Label) {
         facade.stop()
+        label.text = text
+        label1.text = text1
     }
 
     override fun stop() {

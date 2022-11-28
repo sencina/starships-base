@@ -9,7 +9,6 @@ import model.*;
 import movement.Mover;
 import movement.Position;
 import org.jetbrains.annotations.NotNull;
-import org.json.simple.JSONObject;
 import parser.AsteroidParser;
 import parser.BulletParser;
 import parser.EntityParser;
@@ -32,7 +31,6 @@ public class EntityFactory {
         return new Mover<>(createBullet(bulletType, ownerId), position, vector, getBulletSpeed(bulletType));
     }
 
-
     public static ShipController createDefaultShipControllerForTesting(){
         return new ShipController(createDefaultShipMover(new Position(400,400), 90), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
     }
@@ -42,11 +40,11 @@ public class EntityFactory {
     }
 
     public static ShipController createP1DefaultShipController(){
-        return createShipController(LIVES,new Weapon(BULLETS_PER_SHOT, BulletType.valueOf(ACTUAL_BULLET)), new Position(P1_STARTING_X,P1_STARTING_Y), STARTING_ANGLE, STARTING_SPEED);
+        return new ShipController(new Mover<>(new Ship("0", LIVES),new Position(P1_STARTING_X, P1_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
     }
 
     public static ShipController createP2DefaultShipController(){
-        return createShipController(LIVES,new Weapon(BULLETS_PER_SHOT, BulletType.valueOf(ACTUAL_BULLET)), new Position(P2_STARTING_X,P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED);
+        return new ShipController(new Mover<>(new Ship("1", LIVES),new Position(P2_STARTING_X, P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), new Weapon(BULLETS_PER_SHOT,BulletType.valueOf(ACTUAL_BULLET)));
     }
 
     public static Mover<Asteroid> createAsteroidMover(Position position, double rotation) {

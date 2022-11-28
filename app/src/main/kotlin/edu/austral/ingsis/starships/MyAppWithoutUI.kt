@@ -105,12 +105,10 @@ class MyTimeListenerWithoutUI(private val elements: ObservableMap<String, Elemen
 
     private fun validateVictory() {
         if(gameState.ships.size < startingShips){
-            MyStarships().pause()
             println(gameState.ships[0].id+" won!")
             exitProcess(0)
         }
         if(gameState.ships.size == 0){
-            MyStarships().pause()
             println("Lost")
             exitProcess(0)
 

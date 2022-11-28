@@ -93,7 +93,7 @@ public class GameState implements Serializable {
         return new ArrayList<>(newControllers.stream().filter(entity -> !entity.getId().equals(id)).toList());
     }
 
-    private ShipController findShipById(String id) {
+    public ShipController findShipById(String id) {
         for (ShipController controller : getShipControllers()) {
             if (controller.getId().equals(id)) return controller;
         }
