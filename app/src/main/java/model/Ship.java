@@ -21,10 +21,8 @@ public class Ship implements Collideable<Ship>, Entity {
 
     @Override
     public Optional<Ship> collide(Collideable other) {
-        if (other.getEntityType().equals(EntityType.BULLET)) {
-            if (((Bullet)other).getOwnerId().equals(id)) {
-                return Optional.of(this);
-            }
+        if (other.getPoints().first().equals(id)) {
+            return Optional.of(this);
         }
         int damage = other.getDamage() == 0 ? 1 : other.getDamage();
         int life = other.getDamage()/damage;

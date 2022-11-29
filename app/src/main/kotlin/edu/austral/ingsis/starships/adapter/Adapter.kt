@@ -3,7 +3,7 @@ package edu.austral.ingsis.starships.adapter
 import config.Constants
 import controller.ShipController
 import factory.EntityFactory
-import factory.EntityFactory.spawnAsteroid
+import movement.KeyMovement
 import movement.Mover
 import state.GameState
 
@@ -47,6 +47,17 @@ class Adapter(val gameState: GameState, private val spawnProbs: Double) {
             val asteroidMover = EntityFactory.spawnAsteroid(gameState.width, gameState.height)
             newEntities.add(asteroidMover)
         }
+    }
+
+    fun handleCollision(id1: String, id2: String):Adapter{
+        return Adapter(gameState.collideEntities(id1,id2),spawnProbs)
+    }
+
+    fun changeState():Adapter{
+        return Adapter(gameState.changeState(),spawnProbs)
+    }
+    fun handleShipAction(id: String, movement: KeyMovement):Adapter{
+        return Adapter(gameState.handleShipAction(id,movement),spawnProbs)
     }
 
 }

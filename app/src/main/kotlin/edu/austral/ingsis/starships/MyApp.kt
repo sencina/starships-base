@@ -1,7 +1,8 @@
 package edu.austral.ingsis.starships
 
 import config.Constants.*
-import config.manager.ConfigManager
+import config.manager.MyFileReader
+import config.manager.MyFileWriter
 import edu.austral.ingsis.starships.adapter.Adapter
 import edu.austral.ingsis.starships.ui.*
 import factory.StateFactory
@@ -76,7 +77,7 @@ class MyStarships() : Application() {
 
         facade.collisionsListenable.addEventListener(MyCollisionListener())
         facade.timeListenable.addEventListener(MyTimeListener(label, label1, score1, score2))
-        keyTracker.keyPressedListenable.addEventListener(MyKeyPressedListener(label,label1))
+        keyTracker.keyPressedListenable.addEventListener(MyKeyPressedListener(label,label1, score1, score2))
     }
 
     private fun startGame(primaryStage: Stage) {
@@ -115,7 +116,7 @@ class MyStarships() : Application() {
         addCssToLabelMenuOption(twoPlayer, scene, pane, StateFactory.createNewTwoPlayerGameState())
 
         val loadGame = Label("Load Game")
-        addCssToLabelMenuOption(loadGame, scene, pane, ConfigManager.readState())
+        addCssToLabelMenuOption(loadGame, scene, pane, MyFileReader(STATE_PATH).readGameState())
 
         options.children.addAll(onePlayer, twoPlayer, loadGame)
         layout.children.addAll(name, options)
@@ -173,12 +174,12 @@ class MyStarships() : Application() {
     class MyCollisionListener(): EventListener<Collision>{
         override fun handle(event: Collision) {
             println("${event.element1Id} ${event.element2Id}")
-            adapter = Adapter(adapter.gameState.collideEntities(event.element1Id,event.element2Id), SPAWN_PROBABILITY)
+            adapter = adapter.handleCollision(event.element1Id, event.element2Id)
         }
     }
 
-    class MyKeyPressedListener(var label: Label,var label1: Label): EventListener<KeyPressed>{
-        private var keyBindMap: Map<String, Map<KeyMovement, KeyCode>> = ConfigManager.readBindings()
+    class MyKeyPressedListener(var label: Label,var label1: Label, var label3: Label,var label4: Label): EventListener<KeyPressed>{
+        private var keyBindMap: Map<String, Map<KeyMovement, KeyCode>> = MyFileReader(KEYS_PATH).readBindings()
         override fun handle(event: KeyPressed) {
             val key = event.key
 
@@ -187,7 +188,7 @@ class MyStarships() : Application() {
             adapter.gameState.ships.forEach { controller ->
                 keyBindMap[controller.id]?.forEach { (movement, keyCode) ->
                     if (key == keyCode) {
-                        adapter = Adapter(adapter.gameState.handleShipAction(controller.id, movement), SPAWN_PROBABILITY)
+                        adapter = adapter.handleShipAction(controller.id, movement)
                     }
                 }
             }
@@ -197,14 +198,20 @@ class MyStarships() : Application() {
             when (key) {
                 keyCodeOf(PAUSE_GAME) -> pauseGame()
                 keyCodeOf(RESUME_GAME) -> resumeGame()
-                keyCodeOf(SAVE_GAME) -> ConfigManager.saveState(adapter.gameState)
+                keyCodeOf(SAVE_GAME) -> saveGame()
                 else -> {}
             }
         }
 
+        private fun saveGame() {
+            MyFileWriter(STATE_PATH).write(adapter.gameState.toJson())
+            label3.text = "Saved"
+            label4.text = ""
+        }
+
         private fun pauseGame() {
-            pause("$PAUSE_GAME: Resume", "$SAVE_GAME: Save", label, label1)
-            adapter = Adapter(adapter.gameState.changeState(), SPAWN_PROBABILITY)
+            pause("$RESUME_GAME: Resume", "$SAVE_GAME: Save", label, label1)
+            adapter = adapter.changeState()
         }
 
         private fun pause(s: String, s1: String, label: Label, label1: Label) {
@@ -215,7 +222,7 @@ class MyStarships() : Application() {
 
         private fun resumeGame() {
             facade.start()
-            adapter = Adapter(adapter.gameState.changeState(), SPAWN_PROBABILITY)
+            adapter = adapter.changeState()
         }
 
         private fun keyCodeOf(string: String): Any {

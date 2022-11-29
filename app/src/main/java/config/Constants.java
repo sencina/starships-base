@@ -62,7 +62,7 @@ public class Constants {
     public static final ElementColliderType BULLET_COLLIDER_TYPE = ElementColliderType.Rectangular;
     public static final double OFFSET = MAX_ASTEROID_SIZE;
 
-
-
+    public final static String STATE_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/state.json";
+    public final static String KEYS_PATH = System.getProperty("user.dir") + "/app/src/main/java/config/playerKeys.json";
 }
 
