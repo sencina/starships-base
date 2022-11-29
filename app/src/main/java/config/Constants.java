@@ -40,7 +40,9 @@ public class Constants {
     //ASTEROID CONSTANTS
     public static final int MAX_ASTEROID_SIZE = 200;
     public static final int MIN_ASTEROID_SIZE = 50;
-    public static final double ASTEROID_SPEED = 0.5;
+
+    public static final double MAX_ASTEROID_SPEED = 2;
+    public static final double MIN_ASTEROID_SPEED = 0.5;
     public static final double SPAWN_PROBABILITY = 0.002;
 
     //KEY CONSTANTS

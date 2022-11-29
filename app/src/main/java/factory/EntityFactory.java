@@ -5,6 +5,7 @@ import enums.BulletType;
 import enums.WeaponType;
 import generator.IdGenerator;
 import generator.SizeGenerator;
+import generator.SpeedGenerator;
 import model.*;
 import movement.Mover;
 import movement.Position;
@@ -55,8 +56,8 @@ public class EntityFactory {
         return new ShipController(new Mover<>(new Ship("1", LIVES),new Position(P2_STARTING_X, P2_STARTING_Y), STARTING_ANGLE, STARTING_SPEED), createWeapon(WeaponType.valueOf(P2_WEAPON), BulletType.valueOf(P2_BULLET)));
     }
 
-    public static Mover<Asteroid> createAsteroidMover(Position position, double rotation) {
-        return new Mover<>(createAsteroid(), position, rotation, ASTEROID_SPEED);
+    public static Mover<Asteroid> createAsteroidMover(Position position, double rotation, double speed) {
+        return new Mover<>(createAsteroid(), position, rotation, speed);
     }
 
     private static Asteroid createAsteroid() {
@@ -80,7 +81,7 @@ public class EntityFactory {
         int x = (int) (Math.random() * gameWidth);
         int y = (int) (Math.random() * gameHeight);
         double vector = Math.random() * 360;
-        return createAsteroidMover(new Position(x,y), vector);
+        return createAsteroidMover(new Position(x,y), vector, SpeedGenerator.generateAsteroidSpeed());
     }
 
     private static double getBulletSpeed(BulletType bulletType) {

@@ -135,7 +135,7 @@ class MyStarships() : Application() {
         onePlayer.setOnMouseClicked {
             scene.root = pane
             adapter = Adapter(newGameState, SPAWN_PROBABILITY)
-            newGameState.addElementsToView(facade.elements)
+            adapter.addElementsToView(facade.elements)
             startingShips = newGameState.ships.size
         }
     }

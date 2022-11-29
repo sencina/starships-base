@@ -2,9 +2,12 @@ package edu.austral.ingsis.starships.adapter
 
 import config.Constants
 import controller.ShipController
+import edu.austral.ingsis.starships.ui.ElementModel
 import factory.EntityFactory
+import javafx.collections.ObservableMap
 import movement.KeyMovement
 import movement.Mover
+import parser.ModelToUIParser
 import state.GameState
 
 class Adapter(val gameState: GameState, private val spawnProbs: Double) {
@@ -58,6 +61,15 @@ class Adapter(val gameState: GameState, private val spawnProbs: Double) {
     }
     fun handleShipAction(id: String, movement: KeyMovement):Adapter{
         return Adapter(gameState.handleShipAction(id,movement),spawnProbs)
+    }
+
+    fun addElementsToView(elements: ObservableMap<String, ElementModel>) {
+        for (entity in gameState.entities) {
+            elements[entity.id] = ModelToUIParser.parseModelToUIModel(entity)
+        }
+        for (ship in gameState.ships) {
+            elements[ship.id] = ModelToUIParser.parseModelToUIModel(ship.shipMover)
+        }
     }
 
 }

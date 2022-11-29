@@ -255,15 +255,6 @@ public class GameState implements Serializable {
         return new GameState(width, height, entities, ships, idsToRemove, points, !paused);
     }
 
-    public void addElementsToView(ObservableMap<String, ElementModel> elements){
-        for (Mover entity : entities) {
-            elements.put(entity.getId(), ModelToUIParser.parseModelToUIModel(entity));
-        }
-        for (ShipController ship : ships) {
-            elements.put(ship.getId(), ModelToUIParser.parseModelToUIModel(ship.getShipMover()));
-        }
-    }
-
     public boolean isPaused(){
         return paused;
     }
