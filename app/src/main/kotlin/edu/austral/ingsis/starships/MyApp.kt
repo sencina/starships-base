@@ -123,14 +123,14 @@ class MyStarships() : Application() {
     }
 
     private fun addCssToLabelMenuOption(onePlayer: Label, scene: Scene, pane: StackPane, newGameState: GameState) {
-        onePlayer.textFill = Color.WHITE
+        onePlayer.textFill = Color.BLACK
         onePlayer.style = "-fx-font-family: comic-sans; -fx-font-size: 40"
         onePlayer.setOnMouseEntered {
             onePlayer.textFill = Color.RED
             onePlayer.cursor = Cursor.HAND
         }
         onePlayer.setOnMouseExited {
-            onePlayer.textFill = Color.WHITE
+            onePlayer.textFill = Color.BLACK
         }
         onePlayer.setOnMouseClicked {
             scene.root = pane
@@ -141,7 +141,7 @@ class MyStarships() : Application() {
     }
 
     private fun addCssToLabel(name: Label) {
-        name.textFill = Color.WHITE
+        name.textFill = Color.BLACK
         name.style = "-fx-font-family: arial; -fx-font-size: 150"
     }
 
