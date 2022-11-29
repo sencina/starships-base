@@ -17,15 +17,29 @@ public class Position {
         return y;
     }
 
-    public Position move(double rotation, double speed) {
-        return new Position(x + calculateXCoefficient(rotation) * speed, y + calculateYCoefficient(rotation) * speed);
+    public Position update(double rotation, double speed) {
+        return new PositionCalculator(this).update(rotation, speed);
     }
 
-    private double calculateYCoefficient(double rotation) {
-        return -Math.cos(Math.toRadians(rotation));
+    private class PositionCalculator{
+
+        private final Position position;
+
+        private PositionCalculator(Position position) {
+            this.position = position;
+        }
+
+        public Position update(double rotation, double speed) {
+            return new Position(position.x + calculateXCoefficient(rotation) * speed, position.y + calculateYCoefficient(rotation) * speed);
+        }
+        private double calculateYCoefficient(double rotation) {
+            return -Math.cos(Math.toRadians(rotation));
+        }
+
+        private double calculateXCoefficient(double rotation) {
+            return Math.sin(Math.toRadians(rotation));
+        }
     }
 
-    private double calculateXCoefficient(double rotation) {
-        return Math.sin(Math.toRadians(rotation));
-    }
+
 }

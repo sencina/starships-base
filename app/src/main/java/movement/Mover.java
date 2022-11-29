@@ -1,12 +1,9 @@
 package movement;
 
-import edu.austral.ingsis.starships.ui.ElementModel;
 import enums.EntityType;
 import model.Collideable;
 import model.Movable;
-import model.Showable;
 import org.json.simple.JSONObject;
-import parser.EntityParser;
 
 import static config.Constants.MAX_SPEED;
 import static config.Constants.SPEED_INCREMENT;
@@ -39,12 +36,12 @@ public class Mover<T extends Collideable<T>> implements Movable {
 
     @Override
     public Mover<T> move() {
-        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed);
+        return new Mover<>(entity, position.update(rotationInDegrees,speed), rotationInDegrees, speed);
     }
 
     @Override
     public Mover<T> accelerate() {
-        return new Mover<>(entity, position.move(rotationInDegrees,speed), rotationInDegrees, speed <= MAX_SPEED ? speed + SPEED_INCREMENT : speed);
+        return new Mover<>(entity, position.update(rotationInDegrees,speed), rotationInDegrees, speed <= MAX_SPEED ? speed + SPEED_INCREMENT : speed);
     }
 
     @Override
