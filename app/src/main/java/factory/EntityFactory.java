@@ -4,6 +4,7 @@ import controller.ShipController;
 import enums.BulletType;
 import enums.WeaponType;
 import generator.IdGenerator;
+import generator.PositionGenerator;
 import generator.SizeGenerator;
 import generator.SpeedGenerator;
 import model.*;
@@ -78,10 +79,8 @@ public class EntityFactory {
 
     @NotNull
     public static Mover<Asteroid> spawnAsteroid(double gameWidth, double gameHeight) {
-        int x = (int) (Math.random() * gameWidth);
-        int y = (int) (Math.random() * gameHeight);
-        double vector = Math.random() * 360;
-        return createAsteroidMover(new Position(x,y), vector, SpeedGenerator.generateAsteroidSpeed());
+        Tuple<Position,Double> tuple = PositionGenerator.generateAsteroidPosition(gameWidth, gameHeight);
+        return createAsteroidMover(tuple.first(), tuple.second(), SpeedGenerator.generateAsteroidSpeed());
     }
 
     private static double getBulletSpeed(BulletType bulletType) {
