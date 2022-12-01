@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
-public class Asteroid implements Collideable<Asteroid>, Entity{
+public class Asteroid implements Collideable, Entity{
 
     private final String id;
     private final int size;
@@ -19,7 +19,7 @@ public class Asteroid implements Collideable<Asteroid>, Entity{
     }
 
     @Override
-    public Optional<Asteroid> collide(Collideable other) {
+    public Optional<Collideable> collide(Collideable other) {
 
         if (other.getEntityType().equals(entityType)) {
             return Optional.of(this);

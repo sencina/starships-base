@@ -6,7 +6,7 @@ import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
-public class Bullet implements Collideable<Bullet>{
+public class Bullet implements Collideable{
 
     private final String id;
     private final int damage;
@@ -29,7 +29,7 @@ public class Bullet implements Collideable<Bullet>{
     }
 
     @Override
-    public Optional<Bullet> collide(Collideable other) {
+    public Optional<Collideable> collide(Collideable other) {
         if (other.getEntityType().equals(getEntityType()) || other.getId().equals(ownerId)) {
             return Optional.of(this);
         }

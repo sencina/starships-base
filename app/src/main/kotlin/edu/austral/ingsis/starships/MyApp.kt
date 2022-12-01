@@ -268,7 +268,7 @@ class MyStarships() : Application() {
                 facade.elements.clear()
             }
             if (adapter.gameState.ships.size == 0 && !adapter.gameState.isPaused) {
-                pause("YOU LOST!","", label, label1)
+                pause("GAME OVER!","", label, label1)
                 facade.elements.clear()
             }
         }

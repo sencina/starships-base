@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 import static config.Constants.MAX_SPEED;
 import static config.Constants.SPEED_INCREMENT;
 
-public class Mover<T extends Collideable<T>> implements Movable {
+public class Mover<T extends Collideable> implements Movable {
     private final T entity;
     private final Position position;
     private final double rotationInDegrees;

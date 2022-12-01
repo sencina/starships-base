@@ -73,7 +73,7 @@ public class EntityFactory {
         return new Mover<>(createShip(LIVES), position, vector, STARTING_SPEED);
     }
 
-    private static <T extends Collideable<T>> Mover<T> createMover(T entity, Position position, double vector, double speed) {
+    private static <T extends Collideable> Mover<T> createMover(T entity, Position position, double vector, double speed) {
             return new Mover<T>(entity, position, vector, speed);
     }
 

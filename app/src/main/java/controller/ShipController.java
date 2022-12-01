@@ -9,7 +9,7 @@ import org.json.simple.JSONObject;
 import java.util.List;
 import java.util.Optional;
 
-public class ShipController implements Collideable<ShipController>, Movable {
+public class ShipController implements Collideable, Movable {
 
     private final Mover<Ship> shipMover;
     private final Weapon weapon;
@@ -24,13 +24,13 @@ public class ShipController implements Collideable<ShipController>, Movable {
     }
 
     @Override
-    public Optional<ShipController> collide(Collideable other) {
+    public Optional<Collideable> collide(Collideable other) {
 
-        Optional<Ship> shipOptional = shipMover.getEntity().collide(other);
+        Optional<Collideable> shipOptional = shipMover.getEntity().collide(other);
         if (shipOptional.isEmpty()){
             return Optional.empty();
         }
-        return Optional.of(new ShipController(new Mover<>(shipOptional.get(), shipMover.getPosition(),shipMover.getRotationInDegrees(), shipMover.getSpeed()), weapon));
+        return Optional.of(new ShipController(new Mover<>((Ship) shipOptional.get(), shipMover.getPosition(),shipMover.getRotationInDegrees(), shipMover.getSpeed()), weapon));
     }
 
     @Override

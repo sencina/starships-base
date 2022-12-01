@@ -2,9 +2,9 @@ package model;
 
 import java.util.Optional;
 
-public interface Collideable<T> extends Entity{
+public interface Collideable extends Entity{
 
-    Optional<T> collide(Collideable other);
+    Optional<Collideable> collide(Collideable other);
     int getLives();
     int getDamage();
 

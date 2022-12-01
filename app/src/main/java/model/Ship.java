@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 
 import java.util.Optional;
 
-public class Ship implements Collideable<Ship>, Entity {
+public class Ship implements Collideable, Entity {
 
     private final String id;
     private final int lives;
@@ -20,7 +20,7 @@ public class Ship implements Collideable<Ship>, Entity {
     }
 
     @Override
-    public Optional<Ship> collide(Collideable other) {
+    public Optional<Collideable> collide(Collideable other) {
         if (other.getPoints().first().equals(id)) {
             return Optional.of(this);
         }
